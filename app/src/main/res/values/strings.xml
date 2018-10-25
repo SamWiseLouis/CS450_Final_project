@@ -7,4 +7,6 @@
     <string name="about">
        This is our final project!!
     </string>
+    <string name="about_title_text" />
+    <string name="ok" />
 </resources>

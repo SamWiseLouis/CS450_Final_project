@@ -19,10 +19,9 @@ import android.view.ViewGroup;
  * {@link MainFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-
 public class MainFragment extends Fragment {
 
-    public static final String PREF_NAME = "FINALE";
+    public static final String PREF_NAME = "MontyHall";
     public static final String NEW_CLICKED = "NEWCLICKED";
 
     private OnFragmentInteractionListener mListener;
@@ -48,12 +47,23 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-
         View aboutButton = rootView.findViewById(R.id.about_button);
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.about_title_text);
+                builder.setMessage(R.string.about);
+                builder.setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                return;
+                            }
+                        });
+                builder.show();
             }
         });
 
@@ -74,29 +84,10 @@ public class MainFragment extends Fragment {
 
         );
 
-
-        //continue button should launch but set variable to false for newClick so it loads old data
-        View continueButton = rootView.findViewById(R.id.continue_button);
-        continueButton.setOnClickListener(new View.OnClickListener() {
-                                              @Override
-                                              public void onClick(View view) {
-                                                  SharedPreferences.Editor pref_ed =
-                                                          getActivity().getSharedPreferences(
-                                                                  PREF_NAME, Context.MODE_PRIVATE).edit();
-                                                  pref_ed.putBoolean(NEW_CLICKED, false).apply();
-
-                                                  Intent intent = new Intent(
-                                                          getActivity(), GameActivity.class);
-                                                  getActivity().startActivity(intent);
-                                              }
-                                          }
-
-        );
-
         return rootView;
     }
 
-    //
+    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -131,7 +122,7 @@ public class MainFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-
+        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
