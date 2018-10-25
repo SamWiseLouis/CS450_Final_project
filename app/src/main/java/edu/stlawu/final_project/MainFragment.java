@@ -1,54 +1,137 @@
 package edu.stlawu.final_project;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link MainFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ */
+
 public class MainFragment extends Fragment {
 
+    public static final String PREF_NAME = "FINALE";
+    public static final String NEW_CLICKED = "NEWCLICKED";
+
+    private OnFragmentInteractionListener mListener;
+
+    public MainFragment() {
+        // Required empty public constructor
+    }
+
+    // onCreate gets called when the fragment is created
+    // before the UI views are constructed
+    // Initialize data needed for the fragment
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
-    public View onCreateView( LayoutInflater inflater, ViewGroup container,
-                              Bundle savedInstanceState) {
-        View mainView =
-                inflater.inflate(R.layout.fragment_main,container,false);
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
 
-        // button stuff for starting new game and continuing old game
-        View new_button = mainView.findViewById(R.id.new_button);
-        View continue_button = mainView.findViewById(R.id.continue_button);
-        View about_button = mainView.findViewById(R.id.about_button);
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
 
-        new_button.setOnClickListener(new View.OnClickListener() {
+        View aboutButton = rootView.findViewById(R.id.about_button);
+        aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GameActivity.class);
-                getActivity().startActivity(intent);
-
-                //update the string saved to see if new game or load old game
+            public void onClick(View view) {
 
             }
         });
 
-        continue_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        View newButton = rootView.findViewById(R.id.new_button);
+        newButton.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View view) {
+                                             SharedPreferences.Editor pref_ed =
+                                                     getActivity().getSharedPreferences(
+                                                             PREF_NAME, Context.MODE_PRIVATE).edit();
+                                             pref_ed.putBoolean(NEW_CLICKED, true).apply();
 
-            }
-        });
+                                             Intent intent = new Intent(
+                                                     getActivity(), GameActivity.class);
+                                             getActivity().startActivity(intent);
+                                         }
+                                     }
 
-        about_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        );
 
-            }
-        });
 
-        return mainView;
+        //continue button should launch but set variable to false for newClick so it loads old data
+        View continueButton = rootView.findViewById(R.id.continue_button);
+        continueButton.setOnClickListener(new View.OnClickListener() {
+                                              @Override
+                                              public void onClick(View view) {
+                                                  SharedPreferences.Editor pref_ed =
+                                                          getActivity().getSharedPreferences(
+                                                                  PREF_NAME, Context.MODE_PRIVATE).edit();
+                                                  pref_ed.putBoolean(NEW_CLICKED, false).apply();
+
+                                                  Intent intent = new Intent(
+                                                          getActivity(), GameActivity.class);
+                                                  getActivity().startActivity(intent);
+                                              }
+                                          }
+
+        );
+
+        return rootView;
+    }
+
+    //
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+
+        void onFragmentInteraction(Uri uri);
     }
 }

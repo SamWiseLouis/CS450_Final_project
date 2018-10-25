@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Final_project</string>
+
+    <string name="new_text">New</string>
+    <string name="continue_text">Continue</string>
+    <string name="about_text">About</string>
+    <string name="about">
+       This is our final project!!
+    </string>
 </resources>

@@ -1,9 +1,14 @@
 package edu.stlawu.final_project;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import edu.stlawu.final_project.MainFragment.OnFragmentInteractionListener;
+
+public class MainActivity
+        extends AppCompatActivity
+        implements OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -12,17 +17,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }
