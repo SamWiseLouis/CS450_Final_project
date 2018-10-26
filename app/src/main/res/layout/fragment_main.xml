@@ -7,6 +7,12 @@
     android:elevation="8dp"
     tools:context=".MainFragment">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gyro Golf Maze"
+            android:textColor="#000"/>
+
 
         <Button
             android:layout_width="match_parent"

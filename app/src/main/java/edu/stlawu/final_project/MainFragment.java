@@ -78,6 +78,7 @@ public class MainFragment extends Fragment {
 
                                              Intent intent = new Intent(
                                                      getActivity(), GameActivity.class);
+                                             // this is killing the program right now
                                              getActivity().startActivity(intent);
                                          }
                                      }
