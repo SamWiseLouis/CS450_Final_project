@@ -18,6 +18,10 @@ import android.view.Window;
 import android.view.WindowManager;
 
 
+
+//modeled after this persons helpful code **
+//https://stackoverflow.com/questions/6479637/android-accelerometer-moving-ball
+
 public class GameActivity extends Activity implements SensorEventListener{
 
     CustomDrawableView mCustomDrawableView = null;
