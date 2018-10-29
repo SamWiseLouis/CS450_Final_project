@@ -52,7 +52,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         //set the boundry of the balls movement
         Display display = getWindowManager().getDefaultDisplay();
         xmax = (float)display.getWidth() - 100;
-        ymax = (float)display.getHeight() - 100;
+        ymax = (float)display.getHeight() - 140;
     }
 
     // the equivalent of a sensor event listener
@@ -90,17 +90,17 @@ public class GameActivity extends Activity implements SensorEventListener{
         // a bouncy ball
         if (xPosition > xmax) {
             xPosition = xmax;
-            xVelocity = xVelocity*-1/2;
+            xVelocity = xVelocity*-1/4;
         } else if (xPosition < 0) {
             xPosition = 0;
-            xVelocity = xVelocity*-1/2;
+            xVelocity = xVelocity*-1/4;
         }
         if (yPosition > ymax) {
             yPosition = ymax;
-            yVelocity = yVelocity*-1/2;
+            yVelocity = yVelocity*-1/4;
         } else if (yPosition < 0) {
             yPosition = 0;
-            yVelocity = yVelocity*-1/2;
+            yVelocity = yVelocity*-1/4;
         }
     }
     // diffrence in power saving mode vs normal?
