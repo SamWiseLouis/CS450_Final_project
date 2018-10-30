@@ -6,6 +6,8 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -139,6 +141,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         {
             super(context);
             Bitmap ball = BitmapFactory.decodeResource(getResources(), R.drawable.one);
+
             final int dstWidth = 100;
             final int dstHeight = 100;
             mBitmap = Bitmap.createScaledBitmap(ball, dstWidth, dstHeight, true);
@@ -148,9 +151,16 @@ public class GameActivity extends Activity implements SensorEventListener{
         // the canvas that these objects are being drawn on
         protected void onDraw(Canvas canvas)
         {
+            Paint paint = new Paint();
+            paint.setColor(Color.BLUE);
+            paint.setStrokeWidth(10);
+            paint.setStyle(Paint.Style.STROKE);
             final Bitmap bitmap = mBitmap;
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
             invalidate();
+            canvas.drawRect(0, 500, xmax+100, ymax+100,paint);
+            canvas.drawRect(100,600,xmax,ymax,paint);
+            canvas.drawRect(200,700,xmax-100,ymax-100,paint);
         }
     }
 
