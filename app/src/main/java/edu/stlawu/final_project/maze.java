@@ -3,13 +3,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.RectF;
-import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Set;
+
 
 
 // This is where we will define the mazes and how to draw them to the canvas, this is also where we

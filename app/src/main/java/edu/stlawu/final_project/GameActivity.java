@@ -36,6 +36,7 @@ public class GameActivity extends Activity implements SensorEventListener{
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
     public maze amaze;
+    public int screenWidth, screenHeight;
 
 
     /** Called when the activity is first created. */
@@ -47,8 +48,10 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        xmax = displayMetrics.heightPixels - 100;
-        ymax = displayMetrics.widthPixels - 140;
+        screenHeight = displayMetrics.heightPixels;
+        screenWidth = displayMetrics.widthPixels;
+        xmax = screenWidth-(100);
+        ymax = screenHeight-(100)-45;
 
         // Get a reference to a SensorManager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -153,8 +156,8 @@ public class GameActivity extends Activity implements SensorEventListener{
             // scale sizing of the ball
             System.out.println(xmax);
             System.out.println(ymax);
-            final int ballWidth = (int)xmax/14;
-            final int ballHeight = (int)xmax/14;
+            final int ballWidth = 100;
+            final int ballHeight = 100;
             mBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
         }
 
@@ -169,9 +172,7 @@ public class GameActivity extends Activity implements SensorEventListener{
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
             invalidate();
             amaze.draw(canvas,(int)xmax,(int)ymax);
-            canvas.drawRect(0, 500, xmax+100, ymax+100,paint);
-            canvas.drawRect(100,600,xmax,ymax,paint);
-            canvas.drawRect(200,700,xmax-100,ymax-100,paint);
+
         }
     }
 
