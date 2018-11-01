@@ -1,4 +1,5 @@
 package edu.stlawu.final_project;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -14,10 +15,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+
 
 
 
@@ -30,11 +31,12 @@ public class GameActivity extends Activity implements SensorEventListener{
     ShapeDrawable mDrawable = new ShapeDrawable();
     public float xPosition, xAcceleration,xVelocity = 0.0f;
     public float yPosition, yAcceleration,yVelocity = 0.0f;
-    public float xmax,ymax;
+    public int xmax,ymax;
     private Bitmap mBitmap;
-    private Bitmap mWood;
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
+    public maze amaze;
+
 
     /** Called when the activity is first created. */
     @Override
@@ -43,8 +45,10 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         super.onCreate(savedInstanceState);
 
-
-
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        xmax = displayMetrics.heightPixels - 100;
+        ymax = displayMetrics.widthPixels - 140;
 
         // Get a reference to a SensorManager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -57,8 +61,11 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         //set the boundry of the balls movement
         Display display = getWindowManager().getDefaultDisplay();
-        xmax = (float)display.getWidth() - 100;
-        ymax = (float)display.getHeight() - 140;
+
+
+
+        System.out.println("the device screen width: "+xmax);
+        System.out.println("the device screen height: "+ymax);
     }
 
     // the equivalent of a sensor event listener
@@ -141,13 +148,16 @@ public class GameActivity extends Activity implements SensorEventListener{
         {
             super(context);
             Bitmap ball = BitmapFactory.decodeResource(getResources(), R.drawable.one);
-
-            final int dstWidth = 100;
-            final int dstHeight = 100;
-            mBitmap = Bitmap.createScaledBitmap(ball, dstWidth, dstHeight, true);
-
-
+            amaze = new maze();
+            System.out.println(amaze);
+            // scale sizing of the ball
+            System.out.println(xmax);
+            System.out.println(ymax);
+            final int ballWidth = (int)xmax/14;
+            final int ballHeight = (int)xmax/14;
+            mBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
         }
+
         // the canvas that these objects are being drawn on
         protected void onDraw(Canvas canvas)
         {
@@ -158,6 +168,7 @@ public class GameActivity extends Activity implements SensorEventListener{
             final Bitmap bitmap = mBitmap;
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
             invalidate();
+            amaze.draw(canvas,(int)xmax,(int)ymax);
             canvas.drawRect(0, 500, xmax+100, ymax+100,paint);
             canvas.drawRect(100,600,xmax,ymax,paint);
             canvas.drawRect(200,700,xmax-100,ymax-100,paint);
