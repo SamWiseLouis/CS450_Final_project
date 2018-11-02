@@ -35,7 +35,6 @@ public class GameActivity extends Activity implements SensorEventListener{
     private Bitmap mBitmap;
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
-    public maze amaze;
     public int screenWidth, screenHeight;
 
 
@@ -151,8 +150,8 @@ public class GameActivity extends Activity implements SensorEventListener{
         {
             super(context);
             Bitmap ball = BitmapFactory.decodeResource(getResources(), R.drawable.one);
-            amaze = new maze();
-            System.out.println(amaze);
+
+
             // scale sizing of the ball
             System.out.println(xmax);
             System.out.println(ymax);
@@ -164,6 +163,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         // the canvas that these objects are being drawn on
         protected void onDraw(Canvas canvas)
         {
+
             Paint paint = new Paint();
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
@@ -171,7 +171,7 @@ public class GameActivity extends Activity implements SensorEventListener{
             final Bitmap bitmap = mBitmap;
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
             invalidate();
-            amaze.draw(canvas,(int)xmax,(int)ymax);
+
 
         }
     }
