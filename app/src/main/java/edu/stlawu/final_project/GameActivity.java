@@ -36,7 +36,10 @@ public class GameActivity extends Activity implements SensorEventListener{
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
     public int screenWidth, screenHeight;
-
+    private level_one level;
+    private Bitmap ball;
+    public int ballSize = 80;
+    private Context con;
 
     /** Called when the activity is first created. */
     @Override
@@ -49,8 +52,9 @@ public class GameActivity extends Activity implements SensorEventListener{
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenHeight = displayMetrics.heightPixels;
         screenWidth = displayMetrics.widthPixels;
-        xmax = screenWidth-(100);
-        ymax = screenHeight-(100)-45;
+        xmax = screenWidth-(85);
+        ymax = screenHeight-(130);
+
 
         // Get a reference to a SensorManager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -149,15 +153,19 @@ public class GameActivity extends Activity implements SensorEventListener{
         public CustomDrawableView(Context context)
         {
             super(context);
-            Bitmap ball = BitmapFactory.decodeResource(getResources(), R.drawable.one);
+            ball = BitmapFactory.decodeResource(getResources(), R.drawable.one);
 
 
             // scale sizing of the ball
             System.out.println(xmax);
             System.out.println(ymax);
-            final int ballWidth = 100;
-            final int ballHeight = 100;
+            final int ballWidth = ballSize;
+            final int ballHeight = ballSize;
+            level = new level_one( xmax+80, ymax+80, context);
+            System.out.println("making walls");
+            level.generate_walls();
             mBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
+
         }
 
         // the canvas that these objects are being drawn on
@@ -170,7 +178,9 @@ public class GameActivity extends Activity implements SensorEventListener{
             paint.setStyle(Paint.Style.STROKE);
             final Bitmap bitmap = mBitmap;
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
+            level.draw(canvas,paint);
             invalidate();
+
 
 
         }
