@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,7 +21,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 
-
+import java.util.ArrayList;
 
 
 //modeled after this persons helpful code **
@@ -32,14 +34,19 @@ public class GameActivity extends Activity implements SensorEventListener{
     public float xPosition, xAcceleration,xVelocity = 0.0f;
     public float yPosition, yAcceleration,yVelocity = 0.0f;
     public int xmax,ymax;
-    private Bitmap mBitmap;
+    private Bitmap ballBitmap;
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
     public int screenWidth, screenHeight;
     private level_one level;
     private Bitmap ball;
-    public int ballSize = 80;
+    public int ballSize = 70;
     private Context con;
+
+
+
+    public ArrayList<RectF> walls;
+    public level_one currLevel;
 
     /** Called when the activity is first created. */
     @Override
@@ -47,7 +54,7 @@ public class GameActivity extends Activity implements SensorEventListener{
     {
 
         super.onCreate(savedInstanceState);
-
+        //display stuff
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenHeight = displayMetrics.heightPixels;
@@ -72,6 +79,8 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         System.out.println("the device screen width: "+xmax);
         System.out.println("the device screen height: "+ymax);
+        // generate the level
+
     }
 
     // the equivalent of a sensor event listener
@@ -97,8 +106,11 @@ public class GameActivity extends Activity implements SensorEventListener{
         float xS = (xVelocity/4)*frameTime;
         float yS = (yVelocity/4)*frameTime;
 
+
         //sensors are opposite so this changes them to act accordingly to what we want
-        xPosition -= xS;
+        float old_x = xPosition;
+        float old_y = yPosition;
+        xPosition -= xS; // the new x and y position
         yPosition -= yS;
 
         //need to make a deadzone so that the ball is not so touchy
@@ -107,6 +119,35 @@ public class GameActivity extends Activity implements SensorEventListener{
         // ball will bounce off sides and invert velocity direction
         // also decreses the velocity so that the ball acts more like a marble and less like
         // a bouncy ball
+
+        for (RectF awall: walls){
+            // two test rectangles
+            // one with updated x movement
+            RectF sideMove = new RectF(((float)xPosition), ((float)old_y), ((float) xPosition+ballSize), ((float) old_y+ ballSize));
+            // one with updated y movement
+            RectF vertMove = new RectF(((float)old_x), ((float)yPosition), ((float) old_x+ballSize), ((float) yPosition+ ballSize));
+
+
+
+            if (vertMove.intersect(awall) && sideMove.intersect(awall)){
+                xPosition = old_x;
+                yPosition = old_y;
+                xVelocity = xVelocity*-10/11;
+                yVelocity = yVelocity*-10/11;
+
+            }else if (vertMove.intersect(awall) && !sideMove.intersect(awall)){
+                yPosition = old_y;
+                yVelocity = yVelocity*-1/4;
+            }else if (sideMove.intersect(awall)&& !vertMove.intersect(awall)){
+                xPosition = old_x;
+                xVelocity = xVelocity*-1/4;
+
+            }else{
+
+            }
+
+        }
+
         if (xPosition > xmax) {
             xPosition = xmax;
             xVelocity = xVelocity*-1/4;
@@ -121,6 +162,9 @@ public class GameActivity extends Activity implements SensorEventListener{
             yPosition = 0;
             yVelocity = yVelocity*-1/4;
         }
+        //attempt to create maze collision
+
+
     }
     // diffrence in power saving mode vs normal?
     // I've chosen to not implement this method
@@ -161,10 +205,11 @@ public class GameActivity extends Activity implements SensorEventListener{
             System.out.println(ymax);
             final int ballWidth = ballSize;
             final int ballHeight = ballSize;
-            level = new level_one( xmax+80, ymax+80, context);
+            currLevel = new level_one( xmax+80, ymax+80, context);
             System.out.println("making walls");
-            level.generate_walls();
-            mBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
+            currLevel.generate_walls();
+            walls = currLevel.walls;
+            ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
 
         }
 
@@ -176,9 +221,9 @@ public class GameActivity extends Activity implements SensorEventListener{
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.STROKE);
-            final Bitmap bitmap = mBitmap;
+            final Bitmap bitmap = ballBitmap;
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
-            level.draw(canvas,paint);
+            currLevel.draw(canvas,paint);
             invalidate();
 
 

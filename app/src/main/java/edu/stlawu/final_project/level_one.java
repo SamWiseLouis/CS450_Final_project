@@ -89,7 +89,7 @@ public class level_one {
         // need to make proportional to ball size and screen dimensions
         paint.setFilterBitmap(true);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.MAGENTA);
+        paint.setColor(Color.BLUE);
         Bitmap bitmap = BitmapFactory.decodeResource(con.getResources(),R.drawable.wall);
 
         for (RectF awall: walls){
@@ -98,7 +98,8 @@ public class level_one {
 
             // the maze outline
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0,top_gap-5,xmax,ymax,paint);
+        canvas.drawRect(0,top_gap-5,xmax,ymax-2,paint);
+
 
     }
 }
