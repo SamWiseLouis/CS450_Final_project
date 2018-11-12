@@ -30,22 +30,31 @@ import java.util.ArrayList;
 public class GameActivity extends Activity implements SensorEventListener{
 
     CustomDrawableView mCustomDrawableView = null;
-    ShapeDrawable mDrawable = new ShapeDrawable();
+
     public float xPosition, xAcceleration,xVelocity = 0.0f;
     public float yPosition, yAcceleration,yVelocity = 0.0f;
     public int xmax,ymax;
     private Bitmap ballBitmap;
+    private Bitmap wallBitmap;
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
     public int screenWidth, screenHeight;
-    private level_one level;
+
     private Bitmap ball;
-    public int ballSize = 70;
+    private Bitmap wall;
+    public int ballSize;
     private Context con;
 
+    private int curr_level = 0;
 
-
+    //keep track of walls hit
+    private ArrayList<RectF> wall_hit = new ArrayList<RectF>();
+    // get an array of the walls for this level
     public ArrayList<RectF> walls;
+    // get the exits to this level
+    public ArrayList<portal> portals;
+
+    // the level instance
     public level_one currLevel;
 
     /** Called when the activity is first created. */
@@ -59,9 +68,10 @@ public class GameActivity extends Activity implements SensorEventListener{
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenHeight = displayMetrics.heightPixels;
         screenWidth = displayMetrics.widthPixels;
-        xmax = screenWidth-(85);
-        ymax = screenHeight-(130);
 
+        ballSize = (screenWidth/19) -10;
+        xmax = screenWidth-(ballSize+10);
+        ymax = screenHeight-(2*ballSize+10);   // might have to tweek these
 
         // Get a reference to a SensorManager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -79,7 +89,11 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         System.out.println("the device screen width: "+xmax);
         System.out.println("the device screen height: "+ymax);
-        // generate the level
+
+        // generate the set levels for time trial
+
+
+        // now that we have level generate everything and set the arrays to starting values
 
     }
 
@@ -98,7 +112,7 @@ public class GameActivity extends Activity implements SensorEventListener{
     //stuff to update the balls speed location and such
     private void updateBall() {
 
-        //Calculate new speed
+        //Calculating the new speed so that based on tilt time ball will speed up
         xVelocity += (xAcceleration * frameTime)/2;
         yVelocity += (yAcceleration * frameTime)/2;
 
@@ -107,47 +121,73 @@ public class GameActivity extends Activity implements SensorEventListener{
         float yS = (yVelocity/4)*frameTime;
 
 
+
         //sensors are opposite so this changes them to act accordingly to what we want
         float old_x = xPosition;
         float old_y = yPosition;
-        xPosition -= xS; // the new x and y position
+        float new_x = xPosition -xS;
+        float new_y = yPosition -yS;
+
+        // moves in some direction
+        xPosition -= xS;
         yPosition -= yS;
 
-        //need to make a deadzone so that the ball is not so touchy
-        // and the player can have better controls
 
-        // ball will bounce off sides and invert velocity direction
-        // also decreses the velocity so that the ball acts more like a marble and less like
-        // a bouncy ball
-
-        for (RectF awall: walls){
+        // check to see that the ball is allowed to exist there
+        //ball wall collision (a pain in the butt)
+        for (RectF awall: walls) {
             // two test rectangles
+
             // one with updated x movement
-            RectF sideMove = new RectF(((float)xPosition), ((float)old_y), ((float) xPosition+ballSize), ((float) old_y+ ballSize));
+            RectF sideMove = new RectF(((float) xPosition), ((float) old_y), ((float) xPosition + ballSize), ((float) old_y + ballSize));
             // one with updated y movement
-            RectF vertMove = new RectF(((float)old_x), ((float)yPosition), ((float) old_x+ballSize), ((float) yPosition+ ballSize));
+            RectF upMove = new RectF(((float) old_x), ((float) yPosition), ((float) old_x + ballSize), ((float) yPosition + ballSize));
+            // one where both x and y movement
+            RectF diagMove = new RectF(xPosition, yPosition, xPosition + ballSize, yPosition + ballSize);
 
 
+            // abality to move diagonal
+            if (!diagMove.intersect(awall)){
+                //allow movement
+            }
 
-            if (vertMove.intersect(awall) && sideMove.intersect(awall)){
-                xPosition = old_x;
-                yPosition = old_y;
-                xVelocity = xVelocity*-10/11;
-                yVelocity = yVelocity*-10/11;
 
-            }else if (vertMove.intersect(awall) && !sideMove.intersect(awall)){
-                yPosition = old_y;
+            // horizontal collision
+            else if ((upMove.intersect(awall) && diagMove.intersect(awall))){
+
+                yPosition =old_y;
                 yVelocity = yVelocity*-1/4;
-            }else if (sideMove.intersect(awall)&& !vertMove.intersect(awall)){
+                if(!wall_hit.contains(awall)){
+                    wall_hit.add(awall);
+                }
+
+            // vertical collision
+            }else if ((sideMove.intersect(awall)&& diagMove.intersect(awall))){
+
                 xPosition = old_x;
                 xVelocity = xVelocity*-1/4;
+                if(!wall_hit.contains(awall)){
+                    wall_hit.add(awall);
+                }
 
+            }else if (upMove.intersect(awall) && !sideMove.intersect(awall) && !diagMove.intersect(awall)){
+                if(!wall_hit.contains(awall)){
+                    wall_hit.add(awall);
+                }
+                // let diagonal movement happen
+                // allow movement
+            }else if(sideMove.intersect(awall) && !upMove.intersect(awall) && !diagMove.intersect(awall)){
+                if(!wall_hit.contains(awall)){
+                    wall_hit.add(awall);
+                }
+                //allow diagonal movement
             }else{
 
             }
 
         }
 
+        //screen bounds collision (works just fine)
         if (xPosition > xmax) {
             xPosition = xmax;
             xVelocity = xVelocity*-1/4;
@@ -197,20 +237,23 @@ public class GameActivity extends Activity implements SensorEventListener{
         public CustomDrawableView(Context context)
         {
             super(context);
-            ball = BitmapFactory.decodeResource(getResources(), R.drawable.one);
+            ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+            wall = BitmapFactory.decodeResource(getResources(),R.drawable.wall);
 
 
-            // scale sizing of the ball
-            System.out.println(xmax);
-            System.out.println(ymax);
             final int ballWidth = ballSize;
             final int ballHeight = ballSize;
-            currLevel = new level_one( xmax+80, ymax+80, context);
-            System.out.println("making walls");
+            final int wallsize = ballSize+10;
+
+            // generate the levels stuff here
+
+            currLevel = new level_one( screenWidth-10, screenHeight, ballSize, context);
+
+           // System.out.println("making walls");
             currLevel.generate_walls();
             walls = currLevel.walls;
             ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
-
+            wallBitmap = Bitmap.createScaledBitmap(wall, wallsize ,wallsize, true);
         }
 
         // the canvas that these objects are being drawn on
@@ -221,9 +264,18 @@ public class GameActivity extends Activity implements SensorEventListener{
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.STROKE);
+            //make background black
+            canvas.drawColor(Color.BLACK);
             final Bitmap bitmap = ballBitmap;
+            final Bitmap bitmap1 = wallBitmap;
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
-            currLevel.draw(canvas,paint);
+            //currLevel.draw(canvas,paint);
+            //drawing walls that have been hit temporarily
+            final Bitmap wallbit = wall;
+            for (RectF awall: wall_hit){
+                canvas.drawBitmap(wall,null,awall, paint);
+            }
+
             invalidate();
 
 
