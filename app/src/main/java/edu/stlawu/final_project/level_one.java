@@ -28,7 +28,8 @@ public class level_one {
 
     //
     public RectF wall;
-    private Context con;
+
+    public portal aPortal;
     public ArrayList<RectF> walls;
     public ArrayList<portal> portals;
 
@@ -42,7 +43,7 @@ public class level_one {
     private ArrayList<ArrayList<RectF>> level_portals;
 
 
-    public level_one( int max_x, int max_y, int ballwidth, Context context){
+    public level_one( int max_x, int max_y, int ballwidth){
         //given the screen demsinsions the game will draw a level maze from memory and place
         // the ball where it is supposed to be within the maze upon this levels start
 
@@ -50,16 +51,17 @@ public class level_one {
         System.out.println("the max width is " + max_x);
         this.xmax = max_x-rec_width;
         this.ymax= max_y-rec_width;
-        this.con = context;
+
         this.top_gap = 460;
         this.walls =new ArrayList<RectF>();
+        this.portals = new ArrayList<portal>();
 
         this.level_walls = new ArrayList<ArrayList<RectF>>();
         char maze_one[][]={
                 {'-','-','|','-','|','-','|','-','|','-','|','-','|','-','|','-','|','-','-'},
                 {'|','0','0','0','|','0','|','0','|','0','|','0','0','0','0','0','|','0','|'},
                 {'-','0','|','-','-','0','-','0','-','0','-','-','|','-','|','0','-','0','|'},
-                {'|','0','0','0','|','0','0','0','0','0','|','0','0','0','|','0','|','0','0'},
+                {'|','0','0','0','|','0','0','0','0','0','|','0','0','0','|','0','|','0','1'},
                 {'-','0','|','-','-','-','|','0','|','-','-','0','-','0','-','0','-','0','|'},
                 {'|','0','0','0','|','0','0','0','0','0','|','0','|','0','0','0','0','0','|'},
                 {'-','-','|','0','-','-','|','-','|','0','-','-','|','0','-','0','-','0','|'},
@@ -85,7 +87,23 @@ public class level_one {
 }
 
     // method to find all the portals and return that list to caller
-
+    //similar to before because all portals need to use a image to draw over a rectangle
+    public void generate_portals(){
+        System.out.println("making portals now");
+        for(int i=0; i<19; i++) {
+            for (int j = 0; j < 19; j++) {
+                if (Character.isDigit(board[i][j])&& board[i][j]!='0') {
+                    float left = i * rec_width;
+                    float top = j * rec_width + top_gap;
+                    float right = i * rec_width + rec_width;
+                    float bottom = j * rec_width + rec_width + top_gap;
+                    wall = new RectF(left, top, right, bottom);
+                    aPortal = new portal(board[i][j], wall);
+                    portals.add(aPortal);
+                }
+            }
+        }
+    }
 
 // will only generate the walls once
     public void generate_walls(){
@@ -107,30 +125,6 @@ public class level_one {
         }
     }
 
-
-    // need to optimize this badly its so slow
-    public void draw(Canvas canvas, Paint paint){
-        // need to make proportional to ball size and screen dimensions
-
-        paint.setFilterBitmap(true);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.BLUE);
-        Bitmap bitmap = BitmapFactory.decodeResource(con.getResources(),R.drawable.wall);
-
-        //draw every rectangle in the walls array
-        for (RectF awall: walls){
-            canvas.drawBitmap(bitmap,null,awall, paint);
-        }
-
-            // the maze outline
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0,top_gap,xmax+rec_width,ymax+10,paint);
-
-
-    }
-    public Context getCon(){
-        return con;
-    }
 
 
 }

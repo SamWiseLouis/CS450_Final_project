@@ -36,12 +36,14 @@ public class GameActivity extends Activity implements SensorEventListener{
     public int xmax,ymax;
     private Bitmap ballBitmap;
     private Bitmap wallBitmap;
+    private Bitmap portalBitmap;
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
     public int screenWidth, screenHeight;
 
     private Bitmap ball;
     private Bitmap wall;
+    private Bitmap portal;
     public int ballSize;
     private Context con;
 
@@ -91,7 +93,21 @@ public class GameActivity extends Activity implements SensorEventListener{
         System.out.println("the device screen height: "+ymax);
 
         // generate the set levels for time trial
+        currLevel = new level_one( screenWidth-10, screenHeight, ballSize);
 
+        // System.out.println("making walls");
+        currLevel.generate_walls();
+        currLevel.generate_portals();
+        walls = currLevel.walls;
+        portals = currLevel.portals;
+
+
+        final int ballWidth = ballSize;
+        final int ballHeight = ballSize;
+        final int wallsize = ballSize+10;
+        ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
+        wallBitmap = Bitmap.createScaledBitmap(wall, wallsize ,wallsize, true);
+        portalBitmap = Bitmap.createScaledBitmap(portal, wallsize,wallsize,true);
 
         // now that we have level generate everything and set the arrays to starting values
 
@@ -239,21 +255,14 @@ public class GameActivity extends Activity implements SensorEventListener{
             super(context);
             ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
             wall = BitmapFactory.decodeResource(getResources(),R.drawable.wall);
+            portal = BitmapFactory.decodeResource(getResources(),R.drawable.portal);
 
 
-            final int ballWidth = ballSize;
-            final int ballHeight = ballSize;
-            final int wallsize = ballSize+10;
+
 
             // generate the levels stuff here
 
-            currLevel = new level_one( screenWidth-10, screenHeight, ballSize, context);
 
-           // System.out.println("making walls");
-            currLevel.generate_walls();
-            walls = currLevel.walls;
-            ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
-            wallBitmap = Bitmap.createScaledBitmap(wall, wallsize ,wallsize, true);
         }
 
         // the canvas that these objects are being drawn on
@@ -268,12 +277,17 @@ public class GameActivity extends Activity implements SensorEventListener{
             canvas.drawColor(Color.BLACK);
             final Bitmap bitmap = ballBitmap;
             final Bitmap bitmap1 = wallBitmap;
+            final Bitmap bitmap2 = portalBitmap;
             canvas.drawBitmap(bitmap, xPosition, yPosition, null);
-            //currLevel.draw(canvas,paint);
-            //drawing walls that have been hit temporarily
-            final Bitmap wallbit = wall;
+
+            //draw rectangles hit
             for (RectF awall: wall_hit){
                 canvas.drawBitmap(wall,null,awall, paint);
+            }
+            // draw all portals that exist
+            for ( portal aPortal: portals){
+                RectF RecPortal = aPortal.getPortalBitmap();
+                canvas.drawBitmap(bitmap2,null,RecPortal,paint);
             }
 
             invalidate();
