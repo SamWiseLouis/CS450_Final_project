@@ -1,16 +1,10 @@
 package edu.stlawu.final_project;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+
 import android.graphics.RectF;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
+
 
 public class level_one {
 
@@ -23,8 +17,8 @@ public class level_one {
     private int rec_width;
     private int top_gap;
    // the points where the ball will start on this level running
-    private int sx;
-    private int sy;
+    public int sx;
+    public int sy;
 
     //
     public RectF wall;
@@ -65,7 +59,7 @@ public class level_one {
                 {'-','0','|','-','-','-','|','0','|','-','-','0','-','0','-','0','-','0','|'},
                 {'|','0','0','0','|','0','0','0','0','0','|','0','|','0','0','0','0','0','|'},
                 {'-','-','|','0','-','-','|','-','|','0','-','-','|','0','-','0','-','0','|'},
-                {'0','0','|','0','|','0','0','0','0','0','0','0','0','0','|','0','|','0','0'},
+                {'s','0','|','0','|','0','0','0','0','0','0','0','0','0','|','0','|','0','0'},
                 {'-','0','-','0','-','0','|','-','|','-','|','-','|','-','|','-','|','-','|'},
                 {'|','0','0','0','0','0','0','0','0','0','|','0','0','0','|','0','0','0','|'},
                 {'-','0','|','-','-','-','|','0','-','0','-','0','|','-','-','0','|','-','|'},
@@ -86,24 +80,7 @@ public class level_one {
       //this.levels.add(board);
 }
 
-    // method to find all the portals and return that list to caller
-    //similar to before because all portals need to use a image to draw over a rectangle
-    public void generate_portals(){
-        System.out.println("making portals now");
-        for(int i=0; i<19; i++) {
-            for (int j = 0; j < 19; j++) {
-                if (Character.isDigit(board[i][j])&& board[i][j]!='0') {
-                    float left = i * rec_width;
-                    float top = j * rec_width + top_gap;
-                    float right = i * rec_width + rec_width;
-                    float bottom = j * rec_width + rec_width + top_gap;
-                    wall = new RectF(left, top, right, bottom);
-                    aPortal = new portal(board[i][j], wall);
-                    portals.add(aPortal);
-                }
-            }
-        }
-    }
+
 
 // will only generate the walls once
     public void generate_walls(){
@@ -118,13 +95,29 @@ public class level_one {
                     // draw the new rectangle to canvas
                     wall = new RectF(left, top, right, bottom);
                     walls.add(wall);
-
+                }else if(Character.isDigit(board[i][j])&& board[i][j]!='0'){
+                    float left = i * rec_width;
+                    float top = j * rec_width + top_gap;
+                    float right = i * rec_width + rec_width;
+                    float bottom = j * rec_width + rec_width + top_gap;
+                    wall = new RectF(left, top, right, bottom);
+                    aPortal = new portal(board[i][j], wall);
+                    portals.add(aPortal);
+                }else if(board[i][j] == 's'){
+                    int x = i*rec_width;
+                    int y = j *rec_width + top_gap;
+                    sx = x+1;
+                    sy = x+1;
                 }
 
             }
         }
     }
-
-
+public int getSx(){
+        return sx;
+}
+public int getSy(){
+        return sy;
+}
 
 }

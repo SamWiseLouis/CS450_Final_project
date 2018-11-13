@@ -37,6 +37,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 
     public float xPosition, xAcceleration,xVelocity = 0.0f;
     public float yPosition, yAcceleration,yVelocity = 0.0f;
+
     public int xmax,ymax;
     private Bitmap ballBitmap;
     private Bitmap wallBitmap;
@@ -100,7 +101,8 @@ public class GameActivity extends Activity implements SensorEventListener{
         xmax = screenWidth-(ballSize+10);
         ymax = screenHeight-(2*ballSize+10);   // might have to tweek these
 
-        // Get a reference to a SensorManager
+
+                // Get a reference to a SensorManager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
@@ -122,7 +124,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         // System.out.println("making walls");
         currLevel.generate_walls();
-        currLevel.generate_portals();
+
         walls = currLevel.walls;
         portals = currLevel.portals;
 
@@ -133,7 +135,8 @@ public class GameActivity extends Activity implements SensorEventListener{
         ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
         wallBitmap = Bitmap.createScaledBitmap(wall, wallsize ,wallsize, true);
         portalBitmap = Bitmap.createScaledBitmap(portal, wallsize,wallsize,true);
-
+        xPosition = currLevel.sx;
+        yPosition = currLevel.sy-11;
         // now that we have level generate everything and set the arrays to starting values
 
     }
@@ -232,15 +235,15 @@ public class GameActivity extends Activity implements SensorEventListener{
         if (xPosition > xmax) {
             xPosition = xmax;
             xVelocity = xVelocity*-1/4;
-        } else if (xPosition < 0) {
+        } else if (xPosition <0) {
             xPosition = 0;
             xVelocity = xVelocity*-1/4;
         }
         if (yPosition > ymax) {
             yPosition = ymax;
             yVelocity = yVelocity*-1/4;
-        } else if (yPosition < 0) {
-            yPosition = 0;
+        } else if (yPosition < 460) {
+            yPosition = 460;
             yVelocity = yVelocity*-1/4;
         }
         //attempt to create maze collision
