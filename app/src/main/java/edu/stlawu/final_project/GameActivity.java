@@ -20,8 +20,12 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 //modeled after this persons helpful code **
@@ -41,6 +45,10 @@ public class GameActivity extends Activity implements SensorEventListener{
     public float frameTime = 0.666f;
     public int screenWidth, screenHeight;
 
+    private TextView timer_count = null;
+    private Timer t = null;
+    private Counter ctr = null;
+
     private Bitmap ball;
     private Bitmap wall;
     private Bitmap portal;
@@ -58,6 +66,23 @@ public class GameActivity extends Activity implements SensorEventListener{
 
     // the level instance
     public level_one currLevel;
+
+    class Counter extends TimerTask {
+        private int count = 0;
+        @Override
+        public void run() {
+            GameActivity.this.runOnUiThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            GameActivity.this.timer_count.setText(
+                                    Integer.toString(count));
+                            count++;
+                        }
+                    }
+            );
+        }
+    }
 
     /** Called when the activity is first created. */
     @Override
