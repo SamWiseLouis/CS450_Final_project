@@ -10,18 +10,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <GridLayout
+
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_height="100sp"
-                android:layout_width="100sp"
-                android:background="#BCCC"
-                android:id="@+id/level_timer"/>
-
-
-        </GridLayout>
+            android:layout_height="wrap_content"
+            android:text="@string/_0"
+            android:textSize="148sp"
+            android:id="@+id/tv_count"
+            android:textColor="#AAAA"
+            />
 
 
 
