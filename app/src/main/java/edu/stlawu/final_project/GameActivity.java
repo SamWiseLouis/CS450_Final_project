@@ -52,6 +52,7 @@ public class GameActivity extends Activity implements SensorEventListener{
     private Bitmap portal;
     public int ballSize;
     private Context con;
+    private boolean gameOver;
 
     private int curr_level = 0;
 
@@ -93,7 +94,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenHeight = displayMetrics.heightPixels;
         screenWidth = displayMetrics.widthPixels;
-
+        gameOver = false;
         ballSize = (screenWidth/19) -10;
         xmax = screenWidth-(ballSize+10);
         ymax = screenHeight-(2*ballSize+10);   // might have to tweek these
@@ -227,6 +228,11 @@ public class GameActivity extends Activity implements SensorEventListener{
             }
 
         }
+        for (portal aPortal: portals){
+            if (aPortal.getPortalBitmap().contains(xPosition,yPosition)){
+                gameOver =true;
+            }
+        }
 
         //screen bounds collision (works just fine)
         if (xPosition > xmax) {
@@ -299,11 +305,20 @@ public class GameActivity extends Activity implements SensorEventListener{
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.STROKE);
             //make background black
-            canvas.drawColor(Color.BLACK);
+            if(gameOver ==false){
+                canvas.drawColor(Color.BLACK);
+            }else{
+                canvas.drawColor(Color.BLUE);
+                for(RectF awall: currLevel.walls){
+                    canvas.drawBitmap(wall,null,awall, paint);
+                }
+            }
+
             final Bitmap bitmap = ballBitmap;
             final Bitmap bitmap1 = wallBitmap;
             final Bitmap bitmap2 = portalBitmap;
-            canvas.drawBitmap(bitmap, xPosition, yPosition, null);
+            //drawing ball
+
 
             //draw rectangles hit
             for (RectF awall: wall_hit){
@@ -314,6 +329,7 @@ public class GameActivity extends Activity implements SensorEventListener{
                 RectF RecPortal = aPortal.getPortalBitmap();
                 canvas.drawBitmap(bitmap2,null,RecPortal,paint);
             }
+            canvas.drawBitmap(bitmap, xPosition, yPosition, null);
 
             invalidate();
 

@@ -1,16 +1,12 @@
 package edu.stlawu.final_project;
 
-<<<<<<< HEAD
+
 
 import android.graphics.RectF;
 
 import java.util.ArrayList;
 
-=======
-import android.graphics.RectF;
 
-import java.util.ArrayList;
->>>>>>> f972cfbee8de296c3091a56072e56122ae1dbd67
 
 public class level_one {
 
