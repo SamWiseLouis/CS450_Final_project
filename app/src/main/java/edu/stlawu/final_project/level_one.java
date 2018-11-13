@@ -1,16 +1,8 @@
 package edu.stlawu.final_project;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
 
 public class level_one {
 
