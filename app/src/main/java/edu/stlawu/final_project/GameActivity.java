@@ -16,7 +16,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,26 +33,22 @@ public class GameActivity extends Activity implements SensorEventListener{
 
     public float xPosition, xAcceleration,xVelocity = 0.0f;
     public float yPosition, yAcceleration,yVelocity = 0.0f;
-
     public int xmax,ymax;
-    private Bitmap ballBitmap;
-    private Bitmap wallBitmap;
-    private Bitmap portalBitmap;
     private SensorManager sensorManager = null;
     public float frameTime = 0.666f;
     public int screenWidth, screenHeight;
-
+    public int ballSize;
     private TextView timer_count = null;
     private Timer t = null;
     private Counter ctr = null;
-
+    private Bitmap ballBitmap;
+    private Bitmap wallBitmap;
+    private Bitmap portalBitmap;
     private Bitmap ball;
     private Bitmap wall;
     private Bitmap portal;
-    public int ballSize;
-    private Context con;
-    private boolean gameOver;
-
+    // keep track of end of level and what level we are on
+    private boolean levelOver;
     private int curr_level = 0;
 
     //keep track of walls hit
@@ -62,9 +57,8 @@ public class GameActivity extends Activity implements SensorEventListener{
     public ArrayList<RectF> walls;
     // get the exits to this level
     public ArrayList<portal> portals;
-
     // the level instance
-    public level_one currLevel;
+    public cube_maze currLevel;
 
     class Counter extends TimerTask {
         private int count = 0;
@@ -94,49 +88,43 @@ public class GameActivity extends Activity implements SensorEventListener{
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenHeight = displayMetrics.heightPixels;
         screenWidth = displayMetrics.widthPixels;
-        gameOver = false;
         ballSize = (screenWidth/19) -10;
         xmax = screenWidth-(ballSize+10);
         ymax = screenHeight-(2*ballSize+10);   // might have to tweek these
+        System.out.println("the device screen width: "+xmax);
+        System.out.println("the device screen height: "+ymax);
 
-
-                // Get a reference to a SensorManager
+        // Get a reference to a SensorManager
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
-
         mCustomDrawableView = new CustomDrawableView(this);
         setContentView(mCustomDrawableView);
         // setContentView(R.layout.main);
 
-        //set the boundry of the balls movement
-        Display display = getWindowManager().getDefaultDisplay();
 
 
-
-        System.out.println("the device screen width: "+xmax);
-        System.out.println("the device screen height: "+ymax);
 
         // generate the set levels for time trial
-        currLevel = new level_one( screenWidth-10, screenHeight, ballSize);
-
-        // System.out.println("making walls");
-        currLevel.generate_walls();
-
-        walls = currLevel.walls;
-        portals = currLevel.portals;
-
+        currLevel = new cube_maze( screenWidth-10, screenHeight, ballSize);
+        currLevel.generate_maze();
+        this.walls = currLevel.walls;
+        this.portals = currLevel.portals;
+        //set the start position for the ball in this maze
+        xPosition = currLevel.sx;
+        yPosition = currLevel.sy-11;
 
         final int ballWidth = ballSize;
         final int ballHeight = ballSize;
         final int wallsize = ballSize+10;
+        //why is there two of these
         ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
         wallBitmap = Bitmap.createScaledBitmap(wall, wallsize ,wallsize, true);
         portalBitmap = Bitmap.createScaledBitmap(portal, wallsize,wallsize,true);
-        xPosition = currLevel.sx;
-        yPosition = currLevel.sy-11;
+
         // now that we have level generate everything and set the arrays to starting values
 
+        levelOver= false;
     }
 
     // the equivalent of a sensor event listener
@@ -153,65 +141,48 @@ public class GameActivity extends Activity implements SensorEventListener{
     }
     //stuff to update the balls speed location and such
     private void updateBall() {
-
         //Calculating the new speed so that based on tilt time ball will speed up
         xVelocity += (xAcceleration * frameTime)/2;
         yVelocity += (yAcceleration * frameTime)/2;
-
         //Calc distance travelled in that time
         float xS = (xVelocity/4)*frameTime;
         float yS = (yVelocity/4)*frameTime;
-
-
-
         //sensors are opposite so this changes them to act accordingly to what we want
         float old_x = xPosition;
         float old_y = yPosition;
         float new_x = xPosition -xS;
         float new_y = yPosition -yS;
-
         // moves in some direction
         xPosition -= xS;
         yPosition -= yS;
-
-
         // check to see that the ball is allowed to exist there
         //ball wall collision (a pain in the butt)
         for (RectF awall: walls) {
             // two test rectangles
-
             // one with updated x movement
             RectF sideMove = new RectF(((float) xPosition), ((float) old_y), ((float) xPosition + ballSize), ((float) old_y + ballSize));
             // one with updated y movement
             RectF upMove = new RectF(((float) old_x), ((float) yPosition), ((float) old_x + ballSize), ((float) yPosition + ballSize));
             // one where both x and y movement
             RectF diagMove = new RectF(xPosition, yPosition, xPosition + ballSize, yPosition + ballSize);
-
-
             // abality to move diagonal
             if (!diagMove.intersect(awall)){
                 //allow movement
             }
-
-
             // horizontal collision
             else if ((upMove.intersect(awall) && diagMove.intersect(awall))){
-
                 yPosition =old_y;
                 yVelocity = yVelocity*-1/4;
                 if(!wall_hit.contains(awall)){
                     wall_hit.add(awall);
                 }
-
             // vertical collision
             }else if ((sideMove.intersect(awall)&& diagMove.intersect(awall))){
-
                 xPosition = old_x;
                 xVelocity = xVelocity*-1/4;
                 if(!wall_hit.contains(awall)){
                     wall_hit.add(awall);
                 }
-
             }else if (upMove.intersect(awall) && !sideMove.intersect(awall) && !diagMove.intersect(awall)){
                 if(!wall_hit.contains(awall)){
                     wall_hit.add(awall);
@@ -224,16 +195,14 @@ public class GameActivity extends Activity implements SensorEventListener{
                 }
                 //allow diagonal movement
             }else{
-
             }
-
         }
+        //screen boundaries
         for (portal aPortal: portals){
             if (aPortal.getPortalBitmap().contains(xPosition,yPosition)){
-                gameOver =true;
+                 levelOver=true;
             }
         }
-
         //screen bounds collision (works just fine)
         if (xPosition > xmax) {
             xPosition = xmax;
@@ -249,12 +218,8 @@ public class GameActivity extends Activity implements SensorEventListener{
             yPosition = 460;
             yVelocity = yVelocity*-1/4;
         }
-        //attempt to create maze collision
-
-
     }
-    // diffrence in power saving mode vs normal?
-    // I've chosen to not implement this method
+    // this changes with low power setting in devices but we will not mess with this
     public void onAccuracyChanged(Sensor arg0, int arg1)
     {
         // TODO Auto-generated method stub
@@ -280,20 +245,13 @@ public class GameActivity extends Activity implements SensorEventListener{
     //drawing the screen and the ball from a resource image
     public class CustomDrawableView extends View
     {
-
         public CustomDrawableView(Context context)
         {
             super(context);
+            //set the bitmaps up
             ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
             wall = BitmapFactory.decodeResource(getResources(),R.drawable.wall);
             portal = BitmapFactory.decodeResource(getResources(),R.drawable.portal);
-
-
-
-
-            // generate the levels stuff here
-
-
         }
 
         // the canvas that these objects are being drawn on
@@ -304,37 +262,27 @@ public class GameActivity extends Activity implements SensorEventListener{
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.STROKE);
-            //make background black
-            if(gameOver ==false){
+            //make background black if level is not over
+            if(levelOver ==false){
                 canvas.drawColor(Color.BLACK);
             }else{
-                canvas.drawColor(Color.BLUE);
+                //reveal the entire maze
                 for(RectF awall: currLevel.walls){
-                    canvas.drawBitmap(wall,null,awall, paint);
+                    canvas.drawBitmap(wallBitmap,null,awall, paint);
                 }
             }
-
-            final Bitmap bitmap = ballBitmap;
-            final Bitmap bitmap1 = wallBitmap;
-            final Bitmap bitmap2 = portalBitmap;
-            //drawing ball
-
-
             //draw rectangles hit
             for (RectF awall: wall_hit){
-                canvas.drawBitmap(wall,null,awall, paint);
+                canvas.drawBitmap(wallBitmap,null,awall, paint);
             }
-            // draw all portals that exist
+            // draw all portals that exist on this level
             for ( portal aPortal: portals){
                 RectF RecPortal = aPortal.getPortalBitmap();
-                canvas.drawBitmap(bitmap2,null,RecPortal,paint);
+                canvas.drawBitmap(portalBitmap,null,RecPortal,paint);
             }
-            canvas.drawBitmap(bitmap, xPosition, yPosition, null);
-
+            //draw the ball
+            canvas.drawBitmap(ballBitmap, xPosition, yPosition, null);
             invalidate();
-
-
-
         }
     }
 

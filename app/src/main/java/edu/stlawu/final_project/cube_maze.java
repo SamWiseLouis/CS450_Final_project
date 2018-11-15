@@ -8,12 +8,13 @@ import java.util.ArrayList;
 
 
 
-public class level_one {
+public class cube_maze {
 
     private char[][]board;
     static final char VWALL = '|';
     static final char HWALL = '-';
     static final char MAZE_PATH = '0';
+    static final char START ='s';
     private int xmax;
     private int ymax;
     private int rec_width;
@@ -39,7 +40,7 @@ public class level_one {
     private ArrayList<ArrayList<RectF>> level_portals;
 
 
-    public level_one( int max_x, int max_y, int ballwidth){
+    public cube_maze(int max_x, int max_y, int ballwidth){
         //given the screen demsinsions the game will draw a level maze from memory and place
         // the ball where it is supposed to be within the maze upon this levels start
 
@@ -63,7 +64,7 @@ public class level_one {
                 {'-','-','|','0','-','-','|','-','|','0','-','-','|','0','-','0','-','0','|'},
                 {'s','0','|','0','|','0','0','0','0','0','0','0','0','0','|','0','|','0','0'},
                 {'-','0','-','0','-','0','|','-','|','-','|','-','|','-','|','-','|','-','|'},
-                {'|','0','0','0','0','0','0','0','0','0','|','0','0','0','|','0','0','0','|'},
+                {'|','0','0','0','0','0','0','0','0','0','|','0','0','0','|','0','0','2','|'},
                 {'-','0','|','-','-','-','|','0','-','0','-','0','|','-','-','0','|','-','|'},
                 {'|','0','0','0','|','0','0','0','|','0','|','0','0','0','|','0','0','0','|'},
                 {'-','0','-','0','-','-','|','0','-','0','-','-','|','0','-','-','|','0','|'},
@@ -82,10 +83,8 @@ public class level_one {
       //this.levels.add(board);
 }
 
-
-
 // will only generate the walls once
-    public void generate_walls(){
+    public void generate_maze(){
         System.out.println("making walls now");
         for(int i=0; i<19; i++) {
             for (int j = 0; j < 19; j++) {
@@ -97,7 +96,7 @@ public class level_one {
                     // draw the new rectangle to canvas
                     wall = new RectF(left, top, right, bottom);
                     walls.add(wall);
-                }else if(Character.isDigit(board[i][j])&& board[i][j]!='0'){
+                }else if(Character.isDigit(board[i][j])&& board[i][j]!=MAZE_PATH){
                     float left = i * rec_width;
                     float top = j * rec_width + top_gap;
                     float right = i * rec_width + rec_width;
@@ -105,7 +104,7 @@ public class level_one {
                     wall = new RectF(left, top, right, bottom);
                     aPortal = new portal(board[i][j], wall);
                     portals.add(aPortal);
-                }else if(board[i][j] == 's'){
+                }else if(board[i][j] == START){
                     int x = i*rec_width;
                     int y = j *rec_width + top_gap;
                     sx = x+1;
