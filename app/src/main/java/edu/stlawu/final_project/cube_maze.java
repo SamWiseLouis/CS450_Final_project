@@ -49,7 +49,7 @@ public class cube_maze {
         this.xmax = max_x-rec_width;
         this.ymax= max_y-rec_width;
         this.levels = new ArrayList<char[][]>();
-        this.top_gap = 460;
+        this.top_gap = 0;
         this.walls =new ArrayList<RectF>();
         this.portals = new ArrayList<portal>();
 
@@ -150,8 +150,8 @@ public class cube_maze {
                     aPortal = new portal(board[i][j], wall);
                     portals.add(aPortal);
                 }else if(board[i][j] == START){
-                    int x = i*rec_width;
-                    int y = j *rec_width + top_gap;
+                    int x = i *rec_width;
+                    int y = j *rec_width;
                     sx = x+1;
                     sy = x+1;
                 }
@@ -164,6 +164,9 @@ public int getSx(){
 }
 public int getSy(){
         return sy;
+}
+public void setBoard(int bordIndex){
+        this.board = levels.get(bordIndex);
 }
 
 }

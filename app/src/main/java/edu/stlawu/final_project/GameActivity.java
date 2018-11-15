@@ -1,6 +1,7 @@
 package edu.stlawu.final_project;
 
 import android.app.Activity;
+
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -10,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,6 +19,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ import java.util.TimerTask;
 
 public class GameActivity extends Activity implements SensorEventListener{
 
-    CustomDrawableView mCustomDrawableView = null;
+
 
     public float xPosition, xAcceleration,xVelocity = 0.0f;
     public float yPosition, yAcceleration,yVelocity = 0.0f;
@@ -39,8 +42,10 @@ public class GameActivity extends Activity implements SensorEventListener{
     public int screenWidth, screenHeight;
     public int ballSize;
     private TextView timer_count = null;
+    public ImageView gameView = null;
     private Timer t = null;
     private Counter ctr = null;
+    private Bitmap GameScreen;
     private Bitmap ballBitmap;
     private Bitmap wallBitmap;
     private Bitmap portalBitmap;
@@ -50,6 +55,8 @@ public class GameActivity extends Activity implements SensorEventListener{
     // keep track of end of level and what level we are on
     private boolean levelOver;
     private int curr_level = 0;
+    private Canvas gameCanvas;
+
 
     //keep track of walls hit
     private ArrayList<RectF> wall_hit = new ArrayList<RectF>();
@@ -83,7 +90,12 @@ public class GameActivity extends Activity implements SensorEventListener{
     {
 
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_game);
         //display stuff
+        // getting the view that all this should be contained in
+
+
+
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         screenHeight = displayMetrics.heightPixels;
@@ -98,10 +110,6 @@ public class GameActivity extends Activity implements SensorEventListener{
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
-        mCustomDrawableView = new CustomDrawableView(this);
-        setContentView(mCustomDrawableView);
-        // setContentView(R.layout.main);
-
 
 
 
@@ -117,14 +125,59 @@ public class GameActivity extends Activity implements SensorEventListener{
         final int ballWidth = ballSize;
         final int ballHeight = ballSize;
         final int wallsize = ballSize+10;
+
+
+        ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        wall = BitmapFactory.decodeResource(getResources(),R.drawable.wall);
+        portal = BitmapFactory.decodeResource(getResources(),R.drawable.portal);
         //why is there two of these
         ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
         wallBitmap = Bitmap.createScaledBitmap(wall, wallsize ,wallsize, true);
         portalBitmap = Bitmap.createScaledBitmap(portal, wallsize,wallsize,true);
 
-        // now that we have level generate everything and set the arrays to starting values
 
-        levelOver= false;
+        // the Image view we are adding to
+        gameView = (ImageView)findViewById(R.id.maze_view);
+        // the bitmap that is storing the image
+        GameScreen = Bitmap.createBitmap(screenWidth,screenHeight/7*6, Bitmap.Config.ARGB_8888);
+        //the canvas linked to the bitmap that is storing everything
+        gameCanvas  = new Canvas(GameScreen);
+
+
+
+    }
+
+    private void drawSomething(ImageView gameView) {
+
+
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(10);
+        paint.setStyle(Paint.Style.STROKE);
+        //make background black if level is not over
+        if(!levelOver){
+            gameCanvas.drawColor(Color.BLACK);
+        }else{
+            //reveal the entire maze
+            for(RectF awall: currLevel.walls){
+                gameCanvas.drawBitmap(wallBitmap,null,awall, paint);
+            }
+        }
+        //draw rectangles hit
+        for (RectF awall: wall_hit){
+            gameCanvas.drawBitmap(wallBitmap,null,awall, paint);
+        }
+        // draw all portals that exist on this level
+        for ( portal aPortal: portals){
+            RectF RecPortal = aPortal.getPortalBitmap();
+            gameCanvas.drawBitmap(portalBitmap,null,RecPortal,paint);
+        }
+        //draw the ball
+        gameCanvas.drawBitmap(ballBitmap, xPosition, yPosition, null);
+        gameView.setImageBitmap(GameScreen);
+
+
+
     }
 
     // the equivalent of a sensor event listener
@@ -136,6 +189,7 @@ public class GameActivity extends Activity implements SensorEventListener{
                 yAcceleration = sensorEvent.values[1];
                 xAcceleration = sensorEvent.values[2];
                 updateBall();
+                drawSomething(gameView);
             }
         }
     }
@@ -214,8 +268,8 @@ public class GameActivity extends Activity implements SensorEventListener{
         if (yPosition > ymax) {
             yPosition = ymax;
             yVelocity = yVelocity*-1/4;
-        } else if (yPosition < 460) {
-            yPosition = 460;
+        } else if (yPosition < -1) {
+            yPosition = 0;
             yVelocity = yVelocity*-1/4;
         }
     }
@@ -242,48 +296,41 @@ public class GameActivity extends Activity implements SensorEventListener{
     }
 
 
-    //drawing the screen and the ball from a resource image
-    public class CustomDrawableView extends View
-    {
-        public CustomDrawableView(Context context)
-        {
-            super(context);
-            //set the bitmaps up
-            ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
-            wall = BitmapFactory.decodeResource(getResources(),R.drawable.wall);
-            portal = BitmapFactory.decodeResource(getResources(),R.drawable.portal);
-        }
 
-        // the canvas that these objects are being drawn on
-        protected void onDraw(Canvas canvas)
-        {
-            Paint paint = new Paint();
-            paint.setColor(Color.BLUE);
-            paint.setStrokeWidth(10);
-            paint.setStyle(Paint.Style.STROKE);
-            //make background black if level is not over
-            if(levelOver ==false){
-                canvas.drawColor(Color.BLACK);
-            }else{
-                //reveal the entire maze
-                for(RectF awall: currLevel.walls){
-                    canvas.drawBitmap(wallBitmap,null,awall, paint);
-                }
-            }
-            //draw rectangles hit
-            for (RectF awall: wall_hit){
+
+    // the canvas that these objects are being drawn on
+    protected void onDraw(Canvas canvas)
+    {
+        canvas = new Canvas(GameScreen);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(10);
+        paint.setStyle(Paint.Style.STROKE);
+        //make background black if level is not over
+        if(!levelOver){
+            canvas.drawColor(Color.BLACK);
+        }else{
+            //reveal the entire maze
+            for(RectF awall: currLevel.walls){
                 canvas.drawBitmap(wallBitmap,null,awall, paint);
             }
-            // draw all portals that exist on this level
-            for ( portal aPortal: portals){
-                RectF RecPortal = aPortal.getPortalBitmap();
-                canvas.drawBitmap(portalBitmap,null,RecPortal,paint);
-            }
-            //draw the ball
-            canvas.drawBitmap(ballBitmap, xPosition, yPosition, null);
-            invalidate();
         }
+        //draw rectangles hit
+        for (RectF awall: wall_hit){
+            canvas.drawBitmap(wallBitmap,null,awall, paint);
+        }
+        // draw all portals that exist on this level
+        for ( portal aPortal: portals){
+            RectF RecPortal = aPortal.getPortalBitmap();
+            canvas.drawBitmap(portalBitmap,null,RecPortal,paint);
+        }
+        //draw the ball
+        canvas.drawBitmap(ballBitmap, xPosition, yPosition, null);
+        gameView.setImageBitmap(GameScreen);
+
     }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

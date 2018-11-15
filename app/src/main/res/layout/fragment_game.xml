@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameFragment">
+    tools:context=".GameFragment"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,23 +12,21 @@
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/_0"
-            android:textSize="20sp"
+            android:textSize="40sp"
             android:id="@+id/tv_count"
             android:textColor="#875600"
+            android:layout_weight="1"
             />
 
-        <View
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/maze_view"
-            />
-
-
-
-
+            android:layout_weight="6"
+            android:contentDescription="@+string/loading"/>
 
 
     </LinearLayout>
