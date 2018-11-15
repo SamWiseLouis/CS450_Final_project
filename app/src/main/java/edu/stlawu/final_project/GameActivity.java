@@ -257,7 +257,6 @@ public class GameActivity extends Activity implements SensorEventListener{
         // the canvas that these objects are being drawn on
         protected void onDraw(Canvas canvas)
         {
-
             Paint paint = new Paint();
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
