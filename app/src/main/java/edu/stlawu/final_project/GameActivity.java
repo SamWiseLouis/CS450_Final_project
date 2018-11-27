@@ -2,7 +2,6 @@ package edu.stlawu.final_project;
 
 import android.app.Activity;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -11,14 +10,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,7 +51,7 @@ public class GameActivity extends Activity implements SensorEventListener{
     private Bitmap portal;
     // keep track of end of level and what level we are on
     private boolean levelOver;
-    private int curr_level = 0;
+    private int curr_level = 1;
     private Canvas gameCanvas;
 
 
@@ -115,6 +112,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         // generate the set levels for time trial
         currLevel = new cube_maze( screenWidth-10, screenHeight, ballSize);
+        currLevel.setBoard(curr_level);
         currLevel.generate_maze();
         this.walls = currLevel.walls;
         this.portals = currLevel.portals;
@@ -126,15 +124,13 @@ public class GameActivity extends Activity implements SensorEventListener{
         final int ballHeight = ballSize;
         final int wallsize = ballSize+10;
 
-
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
-        wall = BitmapFactory.decodeResource(getResources(),R.drawable.wall);
+        wall = BitmapFactory.decodeResource(getResources(),R.drawable.wall_one);
         portal = BitmapFactory.decodeResource(getResources(),R.drawable.portal);
         //why is there two of these
         ballBitmap = Bitmap.createScaledBitmap(ball, ballWidth, ballHeight, true);
         wallBitmap = Bitmap.createScaledBitmap(wall, wallsize ,wallsize, true);
         portalBitmap = Bitmap.createScaledBitmap(portal, wallsize,wallsize,true);
-
 
         // the Image view we are adding to
         gameView = (ImageView)findViewById(R.id.maze_view);
@@ -142,9 +138,24 @@ public class GameActivity extends Activity implements SensorEventListener{
         GameScreen = Bitmap.createBitmap(screenWidth,screenHeight/7*6, Bitmap.Config.ARGB_8888);
         //the canvas linked to the bitmap that is storing everything
         gameCanvas  = new Canvas(GameScreen);
+        levelOver = false;
+    }
 
 
+    //collision detection based on circle found here and learned from
+    // https://yal.cc/rectangle-circle-intersection-test/
 
+    private void lightpath(float x, float y){
+        for (RectF awall: walls) {
+            float DeltaX = x - Math.max(awall.centerX(), Math.min(x, awall.centerX() + awall.width()));
+            float DeltaY = y - Math.max(awall.centerY(), Math.min(y, awall.centerY() + awall.width()));
+            if ((DeltaX * DeltaX + DeltaY * DeltaY)<(ballSize)){
+                if(!wall_hit.contains(awall)) {
+                    wall_hit.add(awall);
+                }
+            }
+
+        }
     }
 
     private void drawSomething(ImageView gameView) {
@@ -175,8 +186,6 @@ public class GameActivity extends Activity implements SensorEventListener{
         //draw the ball
         gameCanvas.drawBitmap(ballBitmap, xPosition, yPosition, null);
         gameView.setImageBitmap(GameScreen);
-
-
 
     }
 
@@ -210,7 +219,11 @@ public class GameActivity extends Activity implements SensorEventListener{
         xPosition -= xS;
         yPosition -= yS;
         // check to see that the ball is allowed to exist there
-        //ball wall collision (a pain in the butt)
+        //ball wall_layers collision (a pain in the butt)
+
+        //Todo
+        // should consider only checking walls within a radius of the balls location for efficency
+
         for (RectF awall: walls) {
             // two test rectangles
             // one with updated x movement
@@ -225,7 +238,7 @@ public class GameActivity extends Activity implements SensorEventListener{
             }
             // horizontal collision
             else if ((upMove.intersect(awall) && diagMove.intersect(awall))){
-                yPosition =old_y;
+                yPosition = old_y;
                 yVelocity = yVelocity*-1/4;
                 if(!wall_hit.contains(awall)){
                     wall_hit.add(awall);
@@ -250,13 +263,22 @@ public class GameActivity extends Activity implements SensorEventListener{
                 //allow diagonal movement
             }else{
             }
+
         }
-        //screen boundaries
+        //portal detection/ load new level
         for (portal aPortal: portals){
             if (aPortal.getPortalBitmap().contains(xPosition,yPosition)){
-                 levelOver=true;
+                currLevel.setBoard(aPortal.getDestination()-1);
+                this.walls = currLevel.walls;
+                this.portals = currLevel.portals;
+                this.xPosition = currLevel.getSx();
+                this.yPosition = currLevel.getSy()-11;
+                wall_hit.clear();
+                gameCanvas.drawColor(Color.BLACK);
+                break;
             }
         }
+        //screen boundaries
         //screen bounds collision (works just fine)
         if (xPosition > xmax) {
             xPosition = xmax;
@@ -265,13 +287,15 @@ public class GameActivity extends Activity implements SensorEventListener{
             xPosition = 0;
             xVelocity = xVelocity*-1/4;
         }
-        if (yPosition > ymax) {
-            yPosition = ymax;
+        if (yPosition > xmax) {
+            yPosition = xmax;
             yVelocity = yVelocity*-1/4;
         } else if (yPosition < -1) {
             yPosition = 0;
             yVelocity = yVelocity*-1/4;
         }
+
+        lightpath(xPosition,yPosition);
     }
     // this changes with low power setting in devices but we will not mess with this
     public void onAccuracyChanged(Sensor arg0, int arg1)
