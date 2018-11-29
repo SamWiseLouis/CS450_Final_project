@@ -111,7 +111,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 
 
         // generate the set levels for time trial
-        currLevel = new cube_maze( screenWidth-10, screenHeight, ballSize);
+        currLevel = new cube_maze( screenWidth, screenHeight, ballSize);
         currLevel.setBoard(curr_level);
         currLevel.generate_maze();
         this.walls = currLevel.walls;
@@ -139,6 +139,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         //the canvas linked to the bitmap that is storing everything
         gameCanvas  = new Canvas(GameScreen);
         levelOver = false;
+
     }
 
 
@@ -223,7 +224,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         // check to see that the ball is allowed to exist there
         //ball wall_layers collision (a pain in the butt)
         lightpath(xPosition,yPosition);
-        //Todo
+
         // should consider only checking walls within a radius of the balls location for efficency
 
         for (RectF awall: walls) {
@@ -269,15 +270,21 @@ public class GameActivity extends Activity implements SensorEventListener{
         }
         //portal detection/ load new level
         for (portal aPortal: portals){
-            if (aPortal.getPortalBitmap().contains(xPosition,yPosition)){
-                currLevel.setBoard(aPortal.getDestination()-1);
-                this.walls = currLevel.walls;
-                this.portals = currLevel.portals;
-                this.xPosition = currLevel.getSx();
-                this.yPosition = currLevel.getSy()-11;
-                wall_hit.clear();
-                gameCanvas.drawColor(Color.BLACK);
-                break;
+            if (aPortal.getPortalBitmap().contains(xPosition,yPosition)) {
+                // if hits portal on level 6 then game over should trigger
+                if (aPortal.getDestination() == 5) {
+                    levelOver = true;
+                    break;
+                } else {
+                    currLevel.setBoard(aPortal.getDestination());
+                    this.walls = currLevel.walls;
+                    this.portals = currLevel.portals;
+                    this.xPosition = currLevel.getSx();
+                    this.yPosition = currLevel.getSy();
+                    wall_hit.clear();
+                    gameCanvas.drawColor(Color.BLACK);
+                    break;
+                }
             }
         }
         //screen boundaries
@@ -333,8 +340,10 @@ public class GameActivity extends Activity implements SensorEventListener{
         paint.setColor(Color.BLUE);
         paint.setStrokeWidth(10);
         paint.setStyle(Paint.Style.STROKE);
-        //make background black if level is not over
+        // if game is over should only make the screen a single color
+
         if(!levelOver){
+            // if game not over refresh the background
             canvas.drawColor(Color.BLACK);
         }else{
             //reveal the entire maze
