@@ -10,4 +10,5 @@
     <string name="about_title_text" />
     <string name="ok" />
     <string name="_0">0</string>
+    <string name="high_score_text">High Scores</string>
 </resources>

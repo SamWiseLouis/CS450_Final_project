@@ -35,6 +35,15 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/high_scores_button"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:padding="10dp"
+            android:text="@string/high_score_text"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/about_button"
             android:layout_gravity="center"
             android:layout_margin="4dp"
