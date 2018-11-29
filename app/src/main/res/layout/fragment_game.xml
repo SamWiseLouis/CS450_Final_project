@@ -19,6 +19,7 @@
             android:id="@+id/timer_count"
             android:textColor="#875600"
             android:layout_weight="1"
+            android:textAlignment="center"
             />
 
         <ImageView
