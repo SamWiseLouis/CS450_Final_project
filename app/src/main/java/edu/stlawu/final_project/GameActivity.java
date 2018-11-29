@@ -40,8 +40,8 @@ public class GameActivity extends Activity implements SensorEventListener{
     public int ballSize;
     private TextView timer_count = null;
     public ImageView gameView = null;
-    private Timer t = null;
-    private Counter ctr = null;
+    private Timer t;
+    private Counter ctr;
     private Bitmap GameScreen;
     private Bitmap ballBitmap;
     private Bitmap wallBitmap;
@@ -91,7 +91,14 @@ public class GameActivity extends Activity implements SensorEventListener{
         //display stuff
         // getting the view that all this should be contained in
 
-
+        this.timer_count = findViewById(R.id.timer_count);
+        int count = getPreferences(MODE_PRIVATE)
+                .getInt("COUNT", 0);
+        this.timer_count.setText(Integer.toString(count));
+        this.ctr = new Counter();
+        this.ctr.count = count;
+        this.t = new Timer();
+        t.scheduleAtFixedRate(ctr, 0, 1000);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -141,6 +148,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         levelOver = false;
 
     }
+
 
 
     //collision detection based on circle found here and learned from
