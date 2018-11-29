@@ -154,10 +154,12 @@ public class GameActivity extends Activity implements SensorEventListener{
     // https://yal.cc/rectangle-circle-intersection-test/
 
     private void lightpath(float x, float y){
+        float bx = x + 70;
+        float by = y + 70;
         for (RectF awall: walls) {
-            float DeltaX = x - Math.max(awall.centerX(), Math.min(x, awall.centerX() + awall.width()));
-            float DeltaY = y - Math.max(awall.centerY(), Math.min(y, awall.centerY() + awall.width()));
-            if ((DeltaX * DeltaX + DeltaY * DeltaY)<(ballSize)){
+            float DeltaX = bx - Math.max(awall.centerX(), Math.min(bx, awall.centerX() + awall.width()));
+            float DeltaY = by - Math.max(awall.centerY(), Math.min(by, awall.centerY() + awall.width()));
+            if ((DeltaX * DeltaX + DeltaY * DeltaY)<((float)ballSize * (float)ballSize)){
                 if(!wall_hit.contains(awall)) {
                     wall_hit.add(awall);
                 }
@@ -228,7 +230,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         yPosition -= yS;
         // check to see that the ball is allowed to exist there
         //ball wall_layers collision (a pain in the butt)
-
+        lightpath(xPosition,yPosition);
         //Todo
         // should consider only checking walls within a radius of the balls location for efficency
 
@@ -249,24 +251,24 @@ public class GameActivity extends Activity implements SensorEventListener{
                 yPosition = old_y;
                 yVelocity = yVelocity*-1/4;
                 if(!wall_hit.contains(awall)){
-                    wall_hit.add(awall);
+                    //wall_hit.add(awall);
                 }
-            // vertical collision
+                // vertical collision
             }else if ((sideMove.intersect(awall)&& diagMove.intersect(awall))){
                 xPosition = old_x;
                 xVelocity = xVelocity*-1/4;
                 if(!wall_hit.contains(awall)){
-                    wall_hit.add(awall);
+                    //wall_hit.add(awall);
                 }
             }else if (upMove.intersect(awall) && !sideMove.intersect(awall) && !diagMove.intersect(awall)){
                 if(!wall_hit.contains(awall)){
-                    wall_hit.add(awall);
+                    //wall_hit.add(awall);
                 }
                 // let diagonal movement happen
                 // allow movement
             }else if(sideMove.intersect(awall) && !upMove.intersect(awall) && !diagMove.intersect(awall)){
                 if(!wall_hit.contains(awall)){
-                    wall_hit.add(awall);
+                   // wall_hit.add(awall);
                 }
                 //allow diagonal movement
             }else{
@@ -303,7 +305,7 @@ public class GameActivity extends Activity implements SensorEventListener{
             yVelocity = yVelocity*-1/4;
         }
 
-        lightpath(xPosition,yPosition);
+        //lightpath(xPosition,yPosition);
     }
     // this changes with low power setting in devices but we will not mess with this
     public void onAccuracyChanged(Sensor arg0, int arg1)
