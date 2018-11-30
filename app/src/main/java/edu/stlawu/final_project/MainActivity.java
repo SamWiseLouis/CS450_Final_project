@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import edu.stlawu.final_project.MainFragment.OnFragmentInteractionListener;
 
 public class MainActivity
@@ -20,5 +22,6 @@ public class MainActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 
 }

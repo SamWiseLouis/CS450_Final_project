@@ -12,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,7 +26,7 @@ public class MainFragment extends Fragment {
 
     public static final String PREF_NAME = "MontyHall";
     public static final String NEW_CLICKED = "NEWCLICKED";
-
+    private FirebaseAuth mAuth;
     private OnFragmentInteractionListener mListener;
 
     public MainFragment() {
@@ -37,10 +40,12 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
     public View onCreateView(
+
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
@@ -78,12 +83,14 @@ public class MainFragment extends Fragment {
 
                                              Intent intent = new Intent(
                                                      getActivity(), GameActivity.class);
-                                             // this is killing the program right now
+
                                              getActivity().startActivity(intent);
+
                                          }
                                      }
 
         );
+
 
         return rootView;
     }
