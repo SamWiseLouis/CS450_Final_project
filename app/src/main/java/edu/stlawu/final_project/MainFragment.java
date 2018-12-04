@@ -7,13 +7,22 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -24,11 +33,13 @@ import com.google.firebase.auth.FirebaseUser;
  */
 public class MainFragment extends Fragment {
 
-    public static final String PREF_NAME = "MontyHall";
+    public static final String PREF_NAME = "MazeRun";
     public static final String NEW_CLICKED = "NEWCLICKED";
     private FirebaseAuth mAuth;
     private OnFragmentInteractionListener mListener;
-
+    private View rootView;
+    private String email;
+    private String password;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -40,7 +51,15 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        // initalize the firebaseAuthor instance
         mAuth = FirebaseAuth.getInstance();
+
+    }
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
     }
 
     @Override
@@ -50,7 +69,7 @@ public class MainFragment extends Fragment {
             Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         View aboutButton = rootView.findViewById(R.id.about_button);
         aboutButton.setOnClickListener(new View.OnClickListener() {
@@ -74,22 +93,35 @@ public class MainFragment extends Fragment {
 
         View newButton = rootView.findViewById(R.id.new_button);
         newButton.setOnClickListener(new View.OnClickListener() {
-                                         @Override
-                                         public void onClick(View view) {
-                                             SharedPreferences.Editor pref_ed =
-                                                     getActivity().getSharedPreferences(
-                                                             PREF_NAME, Context.MODE_PRIVATE).edit();
-                                             pref_ed.putBoolean(NEW_CLICKED, true).apply();
+             @Override
+             public void onClick(View view) {
+             SharedPreferences.Editor pref_ed =
+                     getActivity().getSharedPreferences(
+                             PREF_NAME, Context.MODE_PRIVATE).edit();
+             pref_ed.putBoolean(NEW_CLICKED, true).apply();
+             Intent intent = new Intent(
+                     getActivity(), GameActivity.class);
 
-                                             Intent intent = new Intent(
-                                                     getActivity(), GameActivity.class);
-
-                                             getActivity().startActivity(intent);
+             getActivity().startActivity(intent);
 
                                          }
                                      }
 
         );
+
+
+       // login button - > after login changes to username
+        View loginbutton = rootView.findViewById(R.id.login);
+        loginbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(
+                        getActivity(), signInActivity.class);
+                getActivity().startActivity(intent);
+
+
+            }
+        });
 
 
         return rootView;
@@ -99,8 +131,13 @@ public class MainFragment extends Fragment {
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
+
         }
     }
+
+
+
+
 
     @Override
     public void onAttach(Context context) {

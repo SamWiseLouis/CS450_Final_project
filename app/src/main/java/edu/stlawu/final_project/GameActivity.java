@@ -19,6 +19,9 @@ import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +56,8 @@ public class GameActivity extends Activity implements SensorEventListener{
     private boolean levelOver;
     private int curr_level = 1;
     private Canvas gameCanvas;
-
+    // firebase stuff
+    private FirebaseAuth mAuth;
 
     //keep track of walls hit
     private ArrayList<RectF> wall_hit = new ArrayList<RectF>();
@@ -90,7 +94,14 @@ public class GameActivity extends Activity implements SensorEventListener{
         setContentView(R.layout.fragment_game);
         //display stuff
         // getting the view that all this should be contained in
+        
+        
 
+        
+        
+        
+        
+        
         this.timer_count = findViewById(R.id.timer_count);
         int count = getPreferences(MODE_PRIVATE)
                 .getInt("COUNT", 0);
@@ -327,6 +338,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
     }
+
 
     @Override
     protected void onStop()

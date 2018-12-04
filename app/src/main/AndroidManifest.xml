@@ -17,10 +17,14 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".GameActivity"
-                  android:screenOrientation="portrait">
+        <activity
+            android:name=".GameActivity"
+            android:screenOrientation="portrait">
 
-
+        </activity>
+        <activity
+            android:name=".signInActivity"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
