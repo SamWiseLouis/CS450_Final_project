@@ -38,8 +38,11 @@ public class MainFragment extends Fragment {
     private FirebaseAuth mAuth;
     private OnFragmentInteractionListener mListener;
     private View rootView;
+    private View baseView;
     private String email;
     private String password;
+    private TextView signup;
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -68,7 +71,7 @@ public class MainFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
+        // Inflate the layout for this
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         View aboutButton = rootView.findViewById(R.id.about_button);
@@ -106,19 +109,23 @@ public class MainFragment extends Fragment {
 
                                          }
                                      }
-
         );
+
+        // launch the signup activity when text is clicked below login
+        View signup = rootView.findViewById(R.id.signUpText);
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),signupActivity.class));
+            }
+        });
 
 
        // login button - > after login changes to username
-        View loginbutton = rootView.findViewById(R.id.login);
+        View loginbutton = rootView.findViewById(R.id.LoginButton);
         loginbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(
-                        getActivity(), signInActivity.class);
-                getActivity().startActivity(intent);
-
 
             }
         });
