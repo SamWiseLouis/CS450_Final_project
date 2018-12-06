@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
 public class signupActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -62,7 +63,16 @@ public class signupActivity extends AppCompatActivity implements View.OnClickLis
                 if(task.isSuccessful()){
                     // if this was successful then a toast line will appear for short amount of time
                     Toast.makeText(getApplicationContext(),"User was created", Toast.LENGTH_SHORT).show();
+                }else {
+                    if(task.getException() instanceof FirebaseAuthUserCollisionException){
+                        Toast.makeText(getApplicationContext(),"Email is already registered", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(),"An Error has Occurred", Toast.LENGTH_SHORT).show();
+                    }
+
+
                 }
+
             }
         });
     }
@@ -74,6 +84,7 @@ public class signupActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.CreateAccount:
                 System.out.println("clicking signup button");
                 signupUser();
+
                 break;
             case R.id.backToLogin:
                 // this is too easy
