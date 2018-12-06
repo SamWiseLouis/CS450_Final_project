@@ -5,11 +5,32 @@
     android:layout_height="match_parent"
     tools:context=".HighScoreActivity">
 
-    <fragment
-        android:id="@+id/fragment_high_score"
-        android:name="edu.stlawu.final_project.HighScoreFragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_high_score" />
+        android:layout_height="match_parent">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_column="0"
+                android:layout_row="0"
+                android:text="High Scores" />
+
+
+            <include
+                layout="@layout/fragment_high_score"
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_row="0" />
+
+        </GridLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

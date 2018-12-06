@@ -20,6 +20,7 @@
             android:name=".GameActivity"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".signupActivity"></activity>
+        <activity android:name=".HighScoreActivity"></activity>
     </application>
 
 </manifest>
