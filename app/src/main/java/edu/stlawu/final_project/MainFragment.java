@@ -7,10 +7,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -21,10 +31,15 @@ import android.view.ViewGroup;
  */
 public class MainFragment extends Fragment {
 
-    public static final String PREF_NAME = "MontyHall";
+    public static final String PREF_NAME = "MazeRun";
     public static final String NEW_CLICKED = "NEWCLICKED";
-
+    private FirebaseAuth mAuth;
     private OnFragmentInteractionListener mListener;
+    private View rootView;
+    private View baseView;
+    private String email;
+    private String password;
+    private TextView signup;
 
     public MainFragment() {
         // Required empty public constructor
@@ -37,15 +52,25 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        // initalize the firebaseAuthor instance
+        mAuth = FirebaseAuth.getInstance();
+
+    }
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
     }
 
     @Override
     public View onCreateView(
+
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        // Inflate the layout for this
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         View aboutButton = rootView.findViewById(R.id.about_button);
         aboutButton.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +122,27 @@ public class MainFragment extends Fragment {
             }
         });
 
+
+        // launch the signup activity when text is clicked below login
+        View signup = rootView.findViewById(R.id.signUpText);
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),signupActivity.class));
+            }
+        });
+
+
+       // login button - > after login changes to username
+        View loginbutton = rootView.findViewById(R.id.LoginButton);
+        loginbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
         return rootView;
     }
 
@@ -104,8 +150,13 @@ public class MainFragment extends Fragment {
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
+
         }
     }
+
+
+
+
 
     @Override
     public void onAttach(Context context) {

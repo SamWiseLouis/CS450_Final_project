@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "833870069476",
+    "firebase_url": "https://finalproject-d342f.firebaseio.com",
+    "project_id": "finalproject-d342f",
+    "storage_bucket": "finalproject-d342f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833870069476:android:d10813cbc9bb8dbd",
+        "android_client_info": {
+          "package_name": "edu.stlawu.final_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "833870069476-v49qigrik2sslr7qc787gfb61f1fdp0g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.stlawu.final_project",
+            "certificate_hash": "f15f99289d72c07e6ad722d892b79d14297a133b"
+          }
+        },
+        {
+          "client_id": "833870069476-p44qslm36a8disi7svlapesuh8ck0qmo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3CCXCTsgtuwj_cJVQJfiBRPK7PTeZ0Io"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "833870069476-p44qslm36a8disi7svlapesuh8ck0qmo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
