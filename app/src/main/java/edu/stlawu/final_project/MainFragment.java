@@ -94,20 +94,34 @@ public class MainFragment extends Fragment {
 
         View newButton = rootView.findViewById(R.id.new_button);
         newButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-             SharedPreferences.Editor pref_ed =
-                     getActivity().getSharedPreferences(
-                             PREF_NAME, Context.MODE_PRIVATE).edit();
-             pref_ed.putBoolean(NEW_CLICKED, true).apply();
-             Intent intent = new Intent(
-                     getActivity(), GameActivity.class);
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor pref_ed =
+                        getActivity().getSharedPreferences(
+                                PREF_NAME, Context.MODE_PRIVATE).edit();
+                pref_ed.putBoolean(NEW_CLICKED, true).apply();
 
-             getActivity().startActivity(intent);
+                Intent intent = new Intent(
+                        getActivity(), GameActivity.class);
+                getActivity().startActivity(intent);
+                }
+        });
+        View highScoreButton = rootView.findViewById(R.id.high_scores_button);
+        highScoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor pref_ed =
+                        getActivity().getSharedPreferences(
+                                PREF_NAME, Context.MODE_PRIVATE).edit();
+                pref_ed.putBoolean(NEW_CLICKED, true).apply();
 
-                                         }
-                                     }
-        );
+                Intent intent = new Intent(
+                        getActivity(), HighScoreActivity.class);
+                // this is killing the program right now
+                getActivity().startActivity(intent);
+            }
+        });
+
 
         // launch the signup activity when text is clicked below login
         View signup = rootView.findViewById(R.id.signUpText);
