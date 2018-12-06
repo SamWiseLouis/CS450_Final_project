@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameActivity">
+    tools:context=".HighScoreActivity">
 
     <fragment
-        android:id="@+id/fragment_game"
-        android:name="edu.stlawu.final_project.GameFragment"
+        android:id="@+id/fragment_high_score"
+        android:name="edu.stlawu.final_project.HighScoreFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_high_score" />
 
 </FrameLayout>
