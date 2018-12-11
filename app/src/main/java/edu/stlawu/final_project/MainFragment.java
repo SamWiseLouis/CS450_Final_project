@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,9 @@ public class MainFragment extends Fragment {
     private TextView signup;
     private Boolean loggedIn;
     private FirebaseUser currentUser;
+    private Button newButton;
+    private Button continueButton;
+
 
     public MainFragment() {
         // Required empty public constructor
@@ -106,7 +110,7 @@ public class MainFragment extends Fragment {
 
         }
         //new game button
-        View newButton = rootView.findViewById(R.id.new_button);
+        newButton = rootView.findViewById(R.id.new_button);
         newButton.setEnabled(loggedIn);
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +126,7 @@ public class MainFragment extends Fragment {
                 }
         });
         //continue game button
-        View continueButton = rootView.findViewById(R.id.continue_button);
+        continueButton = rootView.findViewById(R.id.continue_button);
         continueButton.setEnabled(loggedIn);
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,6 +232,10 @@ public class MainFragment extends Fragment {
                     // if this was successful then a toast line will appear for short amount of time
                     Toast.makeText(getActivity(),"User login successful", Toast.LENGTH_SHORT).show();
                     loggedIn = true;
+                    newButton.setEnabled(loggedIn);
+                    continueButton.setEnabled(loggedIn);
+                    View login = rootView.findViewById(R.id.loginView);
+                    login.setVisibility(View.GONE);
                 }else {
                     // the pass and or username were not correct
                     if(task.getException() instanceof FirebaseAuthInvalidCredentialsException){
