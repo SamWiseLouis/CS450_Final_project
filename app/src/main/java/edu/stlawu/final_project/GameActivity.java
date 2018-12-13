@@ -2,6 +2,7 @@ package edu.stlawu.final_project;
 
 import android.app.Activity;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -25,6 +26,8 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static edu.stlawu.final_project.MainFragment.PREF_NAME;
 
 
 //modeled after this persons helpful code **
@@ -68,6 +71,9 @@ public class GameActivity extends Activity implements SensorEventListener{
     // the level instance
     public cube_maze currLevel;
 
+    // check if we are starting a new game or continuing a game
+    private boolean newGame;
+
     class Counter extends TimerTask {
         private int count = 0;
         @Override
@@ -85,6 +91,11 @@ public class GameActivity extends Activity implements SensorEventListener{
         }
     }
 
+    //easy function to save/ update save data
+    private  void saveData(){
+    }
+
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -94,14 +105,22 @@ public class GameActivity extends Activity implements SensorEventListener{
         setContentView(R.layout.fragment_game);
         //display stuff
         // getting the view that all this should be contained in
-        
-        
 
-        
-        
-        
-        
-        
+
+        //check to see if new game
+        this.newGame = getSharedPreferences(
+                PREF_NAME, Context.MODE_PRIVATE).getBoolean("NEWCLICKED",true);
+
+
+        if(newGame == true){
+            System.out.println("on create, new game button clicked erasing old data");
+
+        }else{
+
+        }
+
+
+
         this.timer_count = findViewById(R.id.timer_count);
         int count = getPreferences(MODE_PRIVATE)
                 .getInt("COUNT", 0);
