@@ -13,4 +13,5 @@
     <string name="high_score_text">High Scores</string>
     <string name="login_text">Login</string>
     <string name="username">Guest</string>
+    <string name="time"></string>
 </resources>
