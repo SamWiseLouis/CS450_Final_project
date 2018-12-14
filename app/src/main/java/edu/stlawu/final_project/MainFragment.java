@@ -139,6 +139,11 @@ public class MainFragment extends Fragment {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences.Editor pref_ed =
+                        getActivity().getSharedPreferences(
+                                PREF_NAME, Context.MODE_PRIVATE).edit();
+                pref_ed.putBoolean(NEW_CLICKED, false).apply();
+
                 Intent intent = new Intent(
                         getActivity(), GameActivity.class);
                 getActivity().startActivity(intent);
@@ -199,14 +204,6 @@ public class MainFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-
-        }
     }
 
     //method for logging the user into an existing account
