@@ -26,6 +26,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import static android.content.ContentValues.TAG;
 
@@ -50,6 +53,10 @@ public class MainFragment extends Fragment {
     private FirebaseUser currentUser;
     private Button newButton;
     private Button continueButton;
+    private Button highScoreButton;
+
+    private DatabaseReference highscoreDatabase;
+    public highscore aHighscore;
 
 
     public MainFragment() {
@@ -72,10 +79,10 @@ public class MainFragment extends Fragment {
     {
         //check to see if user is logged in
         super.onStart();
+        // get the users
         currentUser = mAuth.getCurrentUser();
-
-
-        // if not logged in disable buttons to run game and continue game
+        // attach to the firebase database
+        highscoreDatabase = FirebaseDatabase.getInstance().getReference("highscore");
         if (currentUser == null){
             loggedIn = false;
         }else{
@@ -120,6 +127,7 @@ public class MainFragment extends Fragment {
                                 PREF_NAME, Context.MODE_PRIVATE).edit();
                 pref_ed.putBoolean(NEW_CLICKED, true).apply();
 
+
                 Intent intent = new Intent(
                         getActivity(), GameActivity.class);
                 getActivity().startActivity(intent);
@@ -143,17 +151,14 @@ public class MainFragment extends Fragment {
         });
 
         //highscore button
-        View highScoreButton = rootView.findViewById(R.id.high_scores_button);
+        highScoreButton = rootView.findViewById(R.id.high_scores_button);
         highScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor pref_ed =
-                        getActivity().getSharedPreferences(
-                                PREF_NAME, Context.MODE_PRIVATE).edit();
-                pref_ed.putBoolean(NEW_CLICKED, true).apply();
+                System.out.println("staring Hightscores activity");
+
                 Intent intent = new Intent(
                         getActivity(), HighScoreActivity.class);
-                // this is killing the program right now
                 getActivity().startActivity(intent);
             }
         });
@@ -198,8 +203,6 @@ public class MainFragment extends Fragment {
             }
         });
 
-
-
         return rootView;
     }
 
@@ -233,6 +236,7 @@ public class MainFragment extends Fragment {
                     continueButton.setEnabled(loggedIn);
                     View login = rootView.findViewById(R.id.loginView);
                     login.setVisibility(View.GONE);
+
                 }else {
                     // the pass and or username were not correct
                     if(task.getException() instanceof FirebaseAuthInvalidCredentialsException){
@@ -250,6 +254,24 @@ public class MainFragment extends Fragment {
 
 
     }
+    public void addHighscore(){
+        String username = getResources().getString(R.string.username);
+        String time = getResources().getString(R.string.time);
+        //make sure there is a username and time saved to upload
+        if(username.isEmpty() || time.isEmpty()){
+            Toast.makeText(getActivity(), "no username or time found",Toast.LENGTH_SHORT).show();
+        }else{
+            // get unique id
+            String id = highscoreDatabase.push().getKey();
+            // take the saved data and make it into a highscoreObject
+            aHighscore = new highscore(username,time);
+            // push the highscore object to the database
+            highscoreDatabase.child(id).setValue(aHighscore);
+            Toast.makeText(getActivity(), "highscore added",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 
     @Override

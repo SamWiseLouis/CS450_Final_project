@@ -2,7 +2,11 @@ package edu.stlawu.final_project;
 
 import android.app.Activity;
 
+
+import android.content.Intent;
+
 import android.content.Context;
+
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -109,6 +113,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         setContentView(R.layout.fragment_game);
         //display stuff
         // getting the view that all this should be contained in
+
 
 
         //check to see if new game
@@ -388,10 +393,12 @@ public class GameActivity extends Activity implements SensorEventListener{
         if(!levelOver){
             // if game not over refresh the background
             canvas.drawColor(Color.BLACK);
+            onEnd();
         }else{
             //reveal the entire maze
             for(RectF awall: currLevel.walls){
                 canvas.drawBitmap(wallBitmap,null,awall, paint);
+
             }
         }
         //draw rectangles hit
@@ -409,7 +416,11 @@ public class GameActivity extends Activity implements SensorEventListener{
 
     }
 
-
+    private void onEnd(){
+        Intent intent = new Intent(
+                this, GameActivity.class);
+        this.startActivity(intent);
+    }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         // TODO Auto-generated method stub
