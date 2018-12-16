@@ -1,6 +1,7 @@
 package edu.stlawu.final_project;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 
+import static edu.stlawu.final_project.MainFragment.PREF_NAME;
+
 public class signupActivity extends AppCompatActivity implements View.OnClickListener{
 
     private FirebaseAuth mAuth;
@@ -24,6 +27,7 @@ public class signupActivity extends AppCompatActivity implements View.OnClickLis
     private EditText passwordText;
     private TextView BackToLogin;
     private Button Signup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,11 @@ public class signupActivity extends AppCompatActivity implements View.OnClickLis
         BackToLogin.setOnClickListener(this);
         Signup = findViewById(R.id.CreateAccount);
         Signup.setOnClickListener(this);
+
+
+
+
+
 
     }
 
@@ -93,4 +102,5 @@ public class signupActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
     }
+
 }

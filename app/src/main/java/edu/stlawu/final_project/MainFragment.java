@@ -43,6 +43,7 @@ public class MainFragment extends Fragment {
 
     public static final String PREF_NAME = "MazeRun";
     public static final String NEW_CLICKED = "NEWCLICKED";
+    public static final String SIGNUP_ENABLE = "SIGNUPENABLED";
     private FirebaseAuth mAuth;
     private OnFragmentInteractionListener mListener;
     private View rootView;
@@ -156,7 +157,10 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 System.out.println("staring Hightscores activity");
-
+                SharedPreferences.Editor pref_ed =
+                        getActivity().getSharedPreferences(
+                                PREF_NAME, Context.MODE_PRIVATE).edit();
+                pref_ed.putBoolean(SIGNUP_ENABLE, false).apply();
                 Intent intent = new Intent(
                         getActivity(), HighScoreActivity.class);
                 getActivity().startActivity(intent);
@@ -254,22 +258,7 @@ public class MainFragment extends Fragment {
 
 
     }
-    public void addHighscore(){
-        String username = getResources().getString(R.string.username);
-        String time = getResources().getString(R.string.time);
-        //make sure there is a username and time saved to upload
-        if(username.isEmpty() || time.isEmpty()){
-            Toast.makeText(getActivity(), "no username or time found",Toast.LENGTH_SHORT).show();
-        }else{
-            // get unique id
-            String id = highscoreDatabase.push().getKey();
-            // take the saved data and make it into a highscoreObject
-            aHighscore = new highscore(username,time);
-            // push the highscore object to the database
-            highscoreDatabase.child(id).setValue(aHighscore);
-            Toast.makeText(getActivity(), "highscore added",Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
 
 

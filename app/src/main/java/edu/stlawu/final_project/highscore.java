@@ -5,6 +5,7 @@ package edu.stlawu.final_project;
 
 
 public class highscore {
+    String id;
     String username;
     String score;
 
@@ -12,7 +13,8 @@ public class highscore {
 
     }
 
-    public highscore(String user, String aScore){
+    public highscore(String id,String user, String aScore){
+        this.id = id;
         this.username = user;
         this.score = aScore;
     }

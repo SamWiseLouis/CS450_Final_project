@@ -12,6 +12,7 @@
     <string name="_0">0</string>
     <string name="high_score_text">High Scores</string>
     <string name="login_text">Login</string>
-    <string name="username">Guest</string>
-    <string name="time"></string>
+    <string name="username"></string>
+    <string name="time">0</string>
+    <string name="buttonText">Submit</string>
 </resources>

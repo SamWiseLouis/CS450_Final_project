@@ -23,7 +23,9 @@
         </activity>
         <activity android:name=".signupActivity">
         </activity>
-        <activity android:name=".HighScoreActivity">
+        <activity
+            android:name=".HighScoreActivity"
+            android:screenOrientation="portrait">
         </activity>
 
     </application>
