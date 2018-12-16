@@ -99,7 +99,15 @@ public class GameActivity extends Activity implements SensorEventListener{
     private  void saveData(){
         getPreferences(MODE_PRIVATE)
                 .edit()
-                .putInt("a", 0)
+                .putInt("currentSavedLevel", curr_level)
+                .apply();
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putFloat("currentXPosition", xPosition)
+                .apply();
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putFloat("currentYPosition", yPosition)
                 .apply();
     }
 
@@ -122,10 +130,11 @@ public class GameActivity extends Activity implements SensorEventListener{
 
 
         if(newGame == true){
-            System.out.println("on create, new game button clicked erasing old data");
 
         }else{
-
+            curr_level = getPreferences(MODE_PRIVATE).getInt("currentSavedLevel", 1);
+            xPosition = getPreferences(MODE_PRIVATE).getFloat("currentXPosition", 0.0f);
+            yPosition = getPreferences(MODE_PRIVATE).getFloat("currentYPosition", 0.0f);
         }
 
 
@@ -367,10 +376,22 @@ public class GameActivity extends Activity implements SensorEventListener{
                 SensorManager.SENSOR_DELAY_GAME);
     }
 
+    @Override
+    protected void onPause() {
+        saveData();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        saveData();
+        super.onDestroy();
+    }
 
     @Override
     protected void onStop()
     {
+        saveData();
         // Unregister the listener
         sensorManager.unregisterListener(this);
         super.onStop();
