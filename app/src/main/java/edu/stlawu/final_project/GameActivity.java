@@ -93,6 +93,10 @@ public class GameActivity extends Activity implements SensorEventListener{
 
     //easy function to save/ update save data
     private  void saveData(){
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putInt("a", 0)
+                .apply();
     }
 
 
