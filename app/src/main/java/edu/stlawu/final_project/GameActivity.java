@@ -63,8 +63,9 @@ public class GameActivity extends Activity implements SensorEventListener{
     private boolean levelOver;
     private int curr_level = 1;
     private Canvas gameCanvas;
-    // firebase stuff
-    private FirebaseAuth mAuth;
+
+    private boolean once;
+
 
     //keep track of walls hit
     private ArrayList<RectF> wall_hit = new ArrayList<RectF>();
@@ -185,6 +186,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         //the canvas linked to the bitmap that is storing everything
         gameCanvas  = new Canvas(GameScreen);
         levelOver = false;
+        this.once = true;
 
     }
 
@@ -254,6 +256,7 @@ public class GameActivity extends Activity implements SensorEventListener{
     }
     //stuff to update the balls speed location and such
     private void updateBall() {
+
         //Calculating the new speed so that based on tilt time ball will speed up
         xVelocity += (xAcceleration * frameTime)/2;
         yVelocity += (yAcceleration * frameTime)/2;
@@ -265,9 +268,12 @@ public class GameActivity extends Activity implements SensorEventListener{
         float old_y = yPosition;
         float new_x = xPosition -xS;
         float new_y = yPosition -yS;
-        // moves in some direction
-        xPosition -= xS;
-        yPosition -= yS;
+        // moves in some direction as a kickstart
+        if (once = true) {
+            xPosition -= xS ;
+            yPosition -= yS ;
+            once = false;
+        }
         // check to see that the ball is allowed to exist there
         //ball wall_layers collision (a pain in the butt)
         lightpath(xPosition,yPosition);

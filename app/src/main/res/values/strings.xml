@@ -6,6 +6,9 @@
     <string name="about_text">About</string>
     <string name="about">
        This is our final project!!
+        Citations:
+        https://www.youtube.com/watch?v=IshfDi_NTWs : for guidance on firebase database and authentication
+
     </string>
     <string name="about_title_text" />
     <string name="ok" />
