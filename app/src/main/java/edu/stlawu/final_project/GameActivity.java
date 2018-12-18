@@ -20,6 +20,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
@@ -42,7 +44,9 @@ import static edu.stlawu.final_project.MainFragment.SIGNUP_ENABLE;
 public class GameActivity extends Activity implements SensorEventListener{
 
 
-
+    public AudioAttributes aa = null;
+    private SoundPool soundPool = null;
+    private int collisionSound = 0;
     public float xPosition, xAcceleration,xVelocity = 0.0f;
     public float yPosition, yAcceleration,yVelocity = 0.0f;
     public int xmax,ymax;
@@ -129,7 +133,18 @@ public class GameActivity extends Activity implements SensorEventListener{
         //display stuff
         // getting the view that all this should be contained in
 
+        this.aa = new AudioAttributes
+                .Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .build();
 
+        this.soundPool = new SoundPool.Builder()
+                .setMaxStreams(1)
+                .setAudioAttributes(aa)
+                .build();
+        this.collisionSound = this.soundPool.load(
+                this, R.raw.chain_clink, 1);
 
         this.timer_count = findViewById(R.id.timer_count);
         int count = getPreferences(MODE_PRIVATE)
@@ -326,6 +341,8 @@ public class GameActivity extends Activity implements SensorEventListener{
                 if(!wall_hit.contains(awall)){
                     //wall_hit.add(awall);
                 }
+                soundPool.play(collisionSound, 1f,
+                        1f, 1, 0, 1f);
                 // vertical collision
             }else if ((sideMove.intersect(awall)&& diagMove.intersect(awall))){
                 xPosition = old_x;
@@ -333,16 +350,22 @@ public class GameActivity extends Activity implements SensorEventListener{
                 if(!wall_hit.contains(awall)){
                     //wall_hit.add(awall);
                 }
+                soundPool.play(collisionSound, 1f,
+                        1f, 1, 0, 1f);
             }else if (upMove.intersect(awall) && !sideMove.intersect(awall) && !diagMove.intersect(awall)){
                 if(!wall_hit.contains(awall)){
                     //wall_hit.add(awall);
                 }
+                soundPool.play(collisionSound, 1f,
+                        1f, 1, 0, 1f);
                 // let diagonal movement happen
                 // allow movement
             }else if(sideMove.intersect(awall) && !upMove.intersect(awall) && !diagMove.intersect(awall)){
                 if(!wall_hit.contains(awall)){
                    // wall_hit.add(awall);
                 }
+                soundPool.play(collisionSound, 1f,
+                        1f, 1, 0, 1f);
                 //allow diagonal movement
             }else{
             }
