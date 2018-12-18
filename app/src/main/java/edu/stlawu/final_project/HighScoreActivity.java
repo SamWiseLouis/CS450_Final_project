@@ -30,10 +30,11 @@ import java.util.ArrayList;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static edu.stlawu.final_project.MainFragment.PREF_NAME;
+import static edu.stlawu.final_project.MainFragment.SIGNUP_ENABLE;
 
 public class HighScoreActivity extends Activity {
     private String username;
-    private String time;
+    private int time;
     private EditText usernameInput;
     private DatabaseReference databaseHighscore;
     private ScrollView scorboard;
@@ -41,6 +42,7 @@ public class HighScoreActivity extends Activity {
     private LinearLayout highscoreList;
     private GridLayout aGrid;
     private boolean allowSubmit;
+    private TextView timeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,24 +53,33 @@ public class HighScoreActivity extends Activity {
         //attach to scoreboard database
         databaseHighscore = FirebaseDatabase.getInstance().getReference("highscores");
 
-        this.time = getResources().getString(R.string.time);
+
+
         this.usernameInput = (EditText) findViewById(R.id.highscoreEditText);
         this.scorboard = findViewById(R.id.scoreBoard);
         this.sumbmitButton = findViewById(R.id.highscoreButton);
         this.highscoreList = findViewById(R.id.high_scores_list);
+        this.timeText = findViewById(R.id.textView7);
+
         this.aGrid = findViewById(R.id.grid);
+
         this.allowSubmit = getSharedPreferences(
-                PREF_NAME, Context.MODE_PRIVATE).getBoolean(
+                SIGNUP_ENABLE, Context.MODE_PRIVATE).getBoolean(
                 "SIGNUPENABLED",true);
+
+        this.time = getSharedPreferences(SIGNUP_ENABLE,MODE_PRIVATE).getInt("Time",0);
+
+        System.out.print("the current state of submission is: "+allowSubmit);
         if(allowSubmit != true){
             hideForum();
         }
+        timeText.setText(Integer.toString(time));
 
         sumbmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String usernameText = usernameInput.getText().toString().trim();
-                String highscore = getResources().getString(R.string.time);
+
                 if (usernameText.isEmpty()) {
                     usernameInput.setError("username is required");
                     usernameInput.requestFocus(); // way to get program to emphasize the empty input
@@ -76,8 +87,7 @@ public class HighScoreActivity extends Activity {
                 }
                 // if here their is a username and a highscore to add to database
                 username = usernameText;
-                time = highscore;
-                addHighscore(usernameText, highscore);
+                addHighscore(usernameText, Integer.toString(time));
                 //disable and hide button if successful upload of high-score
                 hideForum();
 
@@ -128,7 +138,7 @@ public class HighScoreActivity extends Activity {
     private void addHighscore(String aName,String aTime){
         //make a unique key and push node to database
         String id = databaseHighscore.push().getKey();
-        highscore aHighscore = new highscore(id,username,time);
+        highscore aHighscore = new highscore(id,username,Integer.toString(time));
         databaseHighscore.child(id).setValue(aHighscore);
         Toast.makeText(this,"Highscore added",Toast.LENGTH_SHORT).show();
     }

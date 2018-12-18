@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -32,6 +33,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static edu.stlawu.final_project.MainFragment.PREF_NAME;
+import static edu.stlawu.final_project.MainFragment.SIGNUP_ENABLE;
 
 
 //modeled after this persons helpful code **
@@ -154,7 +156,6 @@ public class GameActivity extends Activity implements SensorEventListener{
                 SensorManager.SENSOR_DELAY_GAME);
 
 
-
         // generate the set levels for time trial
         currLevel = new cube_maze( screenWidth, screenHeight, ballSize);
         currLevel.setBoard(curr_level);
@@ -183,7 +184,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         GameScreen = Bitmap.createBitmap(screenWidth,screenHeight/7*6, Bitmap.Config.ARGB_8888);
         //the canvas linked to the bitmap that is storing everything
         gameCanvas  = new Canvas(GameScreen);
-        levelOver = false;
+        this.levelOver = false;
         this.once = true;
 
         //check to see if new game
@@ -202,6 +203,10 @@ public class GameActivity extends Activity implements SensorEventListener{
             xPosition = getPreferences(MODE_PRIVATE).getFloat("currentXPosition", 0.0f);
             yPosition = getPreferences(MODE_PRIVATE).getFloat("currentYPosition", 0.0f);
             ctr.count = getPreferences(MODE_PRIVATE).getInt("savedTime", 0);
+        }
+
+        if(levelOver){
+            endgame();
         }
 
     }
@@ -227,7 +232,6 @@ public class GameActivity extends Activity implements SensorEventListener{
     }
 
     private void drawSomething(ImageView gameView) {
-
 
         Paint paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -260,16 +264,23 @@ public class GameActivity extends Activity implements SensorEventListener{
     // the equivalent of a sensor event listener
     public void onSensorChanged(SensorEvent sensorEvent)
     {
-        {   // for some reason this works the best but the magnetic force one is reliable too
-            if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-                //Set sensor values as acceleration
-                yAcceleration = sensorEvent.values[1];
-                xAcceleration = sensorEvent.values[2];
-                updateBall();
-                drawSomething(gameView);
+
+            {   // for some reason this works the best but the magnetic force one is reliable too
+                if (sensorEvent.sensor.getType() == Sensor.TYPE_ORIENTATION && !levelOver) {
+                    //Set sensor values as acceleration
+                    yAcceleration = sensorEvent.values[1];
+                    xAcceleration = sensorEvent.values[2];
+                    updateBall();
+                    drawSomething(gameView);
+                    if(levelOver){
+                        endgame();
+
+                    }
+                }
             }
         }
-    }
+
+
     //stuff to update the balls speed location and such
     private void updateBall() {
 
@@ -414,7 +425,16 @@ public class GameActivity extends Activity implements SensorEventListener{
         saveData();
         // Unregister the listener
         sensorManager.unregisterListener(this);
+        SharedPreferences.Editor pref_ed =
+                this.getSharedPreferences(
+                        SIGNUP_ENABLE, Context.MODE_PRIVATE).edit();
+        pref_ed.putBoolean(SIGNUP_ENABLE, true).apply();
+        pref_ed.putInt("Time",ctr.count).apply();
+        Intent intent = new Intent(
+                this, HighScoreActivity.class);
+        startActivity(intent);
         super.onStop();
+
     }
 
 
@@ -435,6 +455,9 @@ public class GameActivity extends Activity implements SensorEventListener{
             // if game not over refresh the background
             canvas.drawColor(Color.BLACK);
             onEnd();
+            endgame();
+
+
         }else{
             //reveal the entire maze
             for(RectF awall: currLevel.walls){
@@ -467,5 +490,22 @@ public class GameActivity extends Activity implements SensorEventListener{
         // TODO Auto-generated method stub
         super.onConfigurationChanged(newConfig);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+
+
+
+
+    public void endgame(){
+        // close up counter stuff
+        ctr.cancel();
+        t.cancel();
+        onPause();
+
+
+        //kills activity
+        this.finish();
+
+
     }
 }

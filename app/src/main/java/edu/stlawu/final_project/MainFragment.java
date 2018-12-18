@@ -159,11 +159,14 @@ public class MainFragment extends Fragment {
                 System.out.println("staring Hightscores activity");
                 SharedPreferences.Editor pref_ed =
                         getActivity().getSharedPreferences(
-                                PREF_NAME, Context.MODE_PRIVATE).edit();
+                                SIGNUP_ENABLE, Context.MODE_PRIVATE).edit();
                 pref_ed.putBoolean(SIGNUP_ENABLE, false).apply();
+
                 Intent intent = new Intent(
                         getActivity(), HighScoreActivity.class);
                 getActivity().startActivity(intent);
+
+
             }
         });
 
