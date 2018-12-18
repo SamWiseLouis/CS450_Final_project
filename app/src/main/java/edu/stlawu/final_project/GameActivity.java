@@ -198,6 +198,7 @@ public class GameActivity extends Activity implements SensorEventListener{
             getPreferences(MODE_PRIVATE).edit().putInt("savedTime", 0);
         }else{
             curr_level = getPreferences(MODE_PRIVATE).getInt("currentSavedLevel", 1);
+            currLevel.setBoard(curr_level);
             xPosition = getPreferences(MODE_PRIVATE).getFloat("currentXPosition", 0.0f);
             yPosition = getPreferences(MODE_PRIVATE).getFloat("currentYPosition", 0.0f);
             ctr.count = getPreferences(MODE_PRIVATE).getInt("savedTime", 0);
@@ -351,6 +352,7 @@ public class GameActivity extends Activity implements SensorEventListener{
                     this.yPosition = currLevel.getSy();
                     wall_hit.clear();
                     gameCanvas.drawColor(Color.BLACK);
+                    curr_level += 1;
                     break;
                 }
             }
