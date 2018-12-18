@@ -425,14 +425,18 @@ public class GameActivity extends Activity implements SensorEventListener{
         saveData();
         // Unregister the listener
         sensorManager.unregisterListener(this);
-        SharedPreferences.Editor pref_ed =
-                this.getSharedPreferences(
-                        SIGNUP_ENABLE, Context.MODE_PRIVATE).edit();
-        pref_ed.putBoolean(SIGNUP_ENABLE, true).apply();
-        pref_ed.putInt("Time",ctr.count).apply();
-        Intent intent = new Intent(
-                this, HighScoreActivity.class);
-        startActivity(intent);
+
+
+        if(levelOver) {
+            SharedPreferences.Editor pref_ed =
+                    this.getSharedPreferences(
+                            SIGNUP_ENABLE, Context.MODE_PRIVATE).edit();
+            pref_ed.putBoolean(SIGNUP_ENABLE, true).apply();
+            pref_ed.putInt("Time", ctr.count).apply();
+            Intent intent = new Intent(
+                    this, HighScoreActivity.class);
+            startActivity(intent);
+        }
         super.onStop();
 
     }
