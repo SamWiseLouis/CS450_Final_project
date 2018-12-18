@@ -128,25 +128,6 @@ public class GameActivity extends Activity implements SensorEventListener{
 
 
 
-        //check to see if new game
-        this.newGame = getSharedPreferences(
-                PREF_NAME, Context.MODE_PRIVATE).getBoolean("NEWCLICKED",true);
-
-
-        if(newGame == true){
-            getPreferences(MODE_PRIVATE).edit().putInt("currentSavedLevel", 1);
-            getPreferences(MODE_PRIVATE).edit().putFloat("currentXPosition", 0.0f);
-            getPreferences(MODE_PRIVATE).edit().putFloat("currentYPosition", 0.0f);
-            getPreferences(MODE_PRIVATE).edit().putInt("savedTime", 0);
-        }else{
-            curr_level = getPreferences(MODE_PRIVATE).getInt("currentSavedLevel", 1);
-            xPosition = getPreferences(MODE_PRIVATE).getFloat("currentXPosition", 0.0f);
-            yPosition = getPreferences(MODE_PRIVATE).getFloat("currentYPosition", 0.0f);
-            ctr.count = getPreferences(MODE_PRIVATE).getInt("savedTime", 0);
-        }
-
-
-
         this.timer_count = findViewById(R.id.timer_count);
         int count = getPreferences(MODE_PRIVATE)
                 .getInt("COUNT", 0);
@@ -202,6 +183,23 @@ public class GameActivity extends Activity implements SensorEventListener{
         //the canvas linked to the bitmap that is storing everything
         gameCanvas  = new Canvas(GameScreen);
         levelOver = false;
+
+        //check to see if new game
+        this.newGame = getSharedPreferences(
+                PREF_NAME, Context.MODE_PRIVATE).getBoolean("NEWCLICKED",true);
+
+
+        if(newGame == true){
+            getPreferences(MODE_PRIVATE).edit().putInt("currentSavedLevel", 1);
+            getPreferences(MODE_PRIVATE).edit().putFloat("currentXPosition", 0.0f);
+            getPreferences(MODE_PRIVATE).edit().putFloat("currentYPosition", 0.0f);
+            getPreferences(MODE_PRIVATE).edit().putInt("savedTime", 0);
+        }else{
+            curr_level = getPreferences(MODE_PRIVATE).getInt("currentSavedLevel", 1);
+            xPosition = getPreferences(MODE_PRIVATE).getFloat("currentXPosition", 0.0f);
+            yPosition = getPreferences(MODE_PRIVATE).getFloat("currentYPosition", 0.0f);
+            ctr.count = getPreferences(MODE_PRIVATE).getInt("savedTime", 0);
+        }
 
     }
 
