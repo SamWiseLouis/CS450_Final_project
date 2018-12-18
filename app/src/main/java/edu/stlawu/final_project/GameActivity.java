@@ -109,6 +109,10 @@ public class GameActivity extends Activity implements SensorEventListener{
                 .edit()
                 .putFloat("currentYPosition", yPosition)
                 .apply();
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putInt("savedTime", ctr.count)
+                .apply();
     }
 
 
@@ -130,11 +134,15 @@ public class GameActivity extends Activity implements SensorEventListener{
 
 
         if(newGame == true){
-
+            getPreferences(MODE_PRIVATE).edit().putInt("currentSavedLevel", 1);
+            getPreferences(MODE_PRIVATE).edit().putFloat("currentXPosition", 0.0f);
+            getPreferences(MODE_PRIVATE).edit().putFloat("currentYPosition", 0.0f);
+            getPreferences(MODE_PRIVATE).edit().putInt("savedTime", 0);
         }else{
             curr_level = getPreferences(MODE_PRIVATE).getInt("currentSavedLevel", 1);
             xPosition = getPreferences(MODE_PRIVATE).getFloat("currentXPosition", 0.0f);
             yPosition = getPreferences(MODE_PRIVATE).getFloat("currentYPosition", 0.0f);
+            ctr.count = getPreferences(MODE_PRIVATE).getInt("savedTime", 0);
         }
 
 
@@ -374,6 +382,12 @@ public class GameActivity extends Activity implements SensorEventListener{
         super.onResume();
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
+    protected void onStart() {
+        saveData();
+        super.onStart();
     }
 
     @Override
