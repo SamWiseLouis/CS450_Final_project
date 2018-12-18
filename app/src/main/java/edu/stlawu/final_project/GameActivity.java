@@ -100,7 +100,19 @@ public class GameActivity extends Activity implements SensorEventListener{
     private  void saveData(){
         getPreferences(MODE_PRIVATE)
                 .edit()
-                .putInt("a", 0)
+                .putInt("currentSavedLevel", curr_level)
+                .apply();
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putFloat("currentXPosition", xPosition)
+                .apply();
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putFloat("currentYPosition", yPosition)
+                .apply();
+        getPreferences(MODE_PRIVATE)
+                .edit()
+                .putInt("savedTime", ctr.count)
                 .apply();
     }
 
@@ -114,20 +126,6 @@ public class GameActivity extends Activity implements SensorEventListener{
         setContentView(R.layout.fragment_game);
         //display stuff
         // getting the view that all this should be contained in
-
-
-
-        //check to see if new game
-        this.newGame = getSharedPreferences(
-                PREF_NAME, Context.MODE_PRIVATE).getBoolean("NEWCLICKED",true);
-
-
-        if(newGame == true){
-            System.out.println("on create, new game button clicked erasing old data");
-
-        }else{
-
-        }
 
 
 
@@ -187,6 +185,23 @@ public class GameActivity extends Activity implements SensorEventListener{
         gameCanvas  = new Canvas(GameScreen);
         levelOver = false;
         this.once = true;
+
+        //check to see if new game
+        this.newGame = getSharedPreferences(
+                PREF_NAME, Context.MODE_PRIVATE).getBoolean("NEWCLICKED",true);
+
+
+        if(newGame == true){
+            getPreferences(MODE_PRIVATE).edit().putInt("currentSavedLevel", 1);
+            getPreferences(MODE_PRIVATE).edit().putFloat("currentXPosition", 0.0f);
+            getPreferences(MODE_PRIVATE).edit().putFloat("currentYPosition", 0.0f);
+            getPreferences(MODE_PRIVATE).edit().putInt("savedTime", 0);
+        }else{
+            curr_level = getPreferences(MODE_PRIVATE).getInt("currentSavedLevel", 1);
+            xPosition = getPreferences(MODE_PRIVATE).getFloat("currentXPosition", 0.0f);
+            yPosition = getPreferences(MODE_PRIVATE).getFloat("currentYPosition", 0.0f);
+            ctr.count = getPreferences(MODE_PRIVATE).getInt("savedTime", 0);
+        }
 
     }
 
@@ -373,10 +388,28 @@ public class GameActivity extends Activity implements SensorEventListener{
                 SensorManager.SENSOR_DELAY_GAME);
     }
 
+    @Override
+    protected void onStart() {
+        saveData();
+        super.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        saveData();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        saveData();
+        super.onDestroy();
+    }
 
     @Override
     protected void onStop()
     {
+        saveData();
         // Unregister the listener
         sensorManager.unregisterListener(this);
         super.onStop();
