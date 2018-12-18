@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Final_project</string>
+    <string name="app_name">Gyro Golf Maze</string>
 
     <string name="new_text">Run The Mze</string>
     <string name="continue_text">Continue</string>
     <string name="about_text">About</string>
     <string name="about">
-       This is our final project!!
+       Welcome to Gyro Golf Maze! Try to make it through every level you can in as little time as possible. Tilt your device to make the ball move through the maze and reach each portal. The walls will appear as the ball collides with them.
         Citations:
         https://www.youtube.com/watch?v=IshfDi_NTWs : for guidance on firebase database and authentication
 
